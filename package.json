@@ -1,0 +1,31 @@
+{
+  "name": "garfo",
+  "version": "0.0.1",
+  "description": "Visualizador de algoritmos e heurísticas em grafos",
+  "main": "/src/index.jsx",
+  "scripts": {
+    "test": "",
+    "dev": "webpack-dev-server --progress --colors",
+    "build": "webpack --progress --colors"
+  },
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^0.28.0",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
+    "style-loader": "^0.16.1",
+    "webpack": "^2.4.1",
+    "webpack-dev-server": "^2.4.4"
+  },
+  "dependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "redux": "^3.6.0"
+  }
+}
