@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 
-import "./less/main.less";
+import "./css/main.css";
 
 import { Controls } from "./components/controls.jsx";
 import { Graph } from "./components/graph.jsx";
@@ -23,10 +23,10 @@ class App extends React.Component {
         return (
             <div className="container fullHeight">
                 <div className="row fullHeight">
-                    <div className="two columns fullHeight">
+                    <div className="three columns fullHeight">
                         <Controls />
                     </div>
-                    <div className="ten columns fullHeight">
+                    <div className="nine columns fullHeight">
                         <Graph />
                     </div>
                 </div>

@@ -18,13 +18,26 @@ function unselectVertices(state) {
 }
 
 const graph = (state = [], action) => {
-    if(action.from != 'GRAPH')
+    if (action.from != 'GRAPH')
         return state;
-    
-    const controlsState = store.getState().controls;
+
+    const controlsState = store.getState().controls.action;
 
     switch (action.type) {
         case 'SELECT_VERTEX':
+            if (controlsState == 'DELETE_VERTEX') {
+                return state.filter(e => {
+                    if (e.id != action.id) {
+                        e.adjacentes = e.adjacentes.filter(p => {
+                            if (p != action.id)
+                                return p;
+                        });
+
+                        return e;
+                    }
+                });
+            }
+
             unselectVertices(state);
             selectedVertex = true;
             counterOutterClicks = 0;
@@ -56,40 +69,35 @@ const graph = (state = [], action) => {
             selectedVertex = true;
             mouseUpId = action.id;
             counterOutterClicks = 0;
-            
-            if(mouseDownId != -1 && mouseUpId != mouseDownId) 
+
+            if (mouseDownId != -1 && mouseUpId != mouseDownId)
                 state.map(e => {
-                    if(e.id == mouseDownId) 
+                    if (e.id == mouseDownId)
                         e.adjacentes = [...e.adjacentes, mouseUpId];
                     return e;
                 });
-            
 
             mouseDownId = mouseUpId = -1;
 
             return state;
         case 'MOUSE_BLANK':
-            if (selectedVertex && counterOutterClicks < 1) {
-                counterOutterClicks = 0;
-
-                return state;
-            }
-
-            selectedVertex = false;
-
-            mouseUpId = -1;
+            mouseDownId = mouseUpId = -1;
 
             return state;
         case 'ADD_VERTEX':
+            if (controlsState != 'ADD_VERTEX')
+                return state;
+
             if (selectedVertex && counterOutterClicks < 1) {
                 counterOutterClicks++;
                 return state;
-            }
+            } 
 
             unselectVertices(state);
 
             return [...state, {
                 id: nextVertexId++,
+                label: nextVertexId,
                 adjacentes: [],
                 x: action.x,
                 y: action.y,

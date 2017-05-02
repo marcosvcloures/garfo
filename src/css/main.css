@@ -17,3 +17,15 @@ svg {
 #controls button {
     width: 100%;
 }
+
+button.btn.active {
+    background: #0d6d64;
+}
+
+[type="checkbox"]+label {
+    font-size: 14px;
+}
+
+input[type="text"] {
+    font-size: 14px;
+}

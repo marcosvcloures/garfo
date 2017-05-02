@@ -124,7 +124,7 @@ body {
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.6;
   font-weight: 400;
-  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Josefin Sans", "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #222; }
 
 
@@ -209,9 +209,9 @@ input[type="button"].button-primary:focus {
   background-color: #1EAEDB;
   border-color: #1EAEDB; }
 
-
+/*
 /* Forms
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+–––––––––––––––––––––––––––––––––––––––––––––––––– 
 input[type="email"],
 input[type="number"],
 input[type="search"],
@@ -222,13 +222,13 @@ input[type="password"],
 textarea,
 select {
   height: 38px;
-  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit 
   background-color: #fff;
   border: 1px solid #D1D1D1;
   border-radius: 4px;
   box-shadow: none;
-  box-sizing: border-box; }
-/* Removes awkward default styles on some inputs for iOS */
+  box-sizing: border-box; } 
+/* Removes awkward default styles on some inputs for iOS 
 input[type="email"],
 input[type="number"],
 input[type="search"],
@@ -270,7 +270,7 @@ label > .label-body {
   display: inline-block;
   margin-left: .5rem;
   font-weight: normal; }
-
+*/
 
 /* Lists
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

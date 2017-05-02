@@ -17,7 +17,7 @@ class Edge extends React.Component {
 
         const from = vertexList.find(e => e.id == this.props.from);
         const to = vertexList.find(e => e.id == this.props.to);
-        
+
         return (
             <g>
                 <line x1={(to.x + from.x) / 2}
@@ -50,6 +50,8 @@ class Vertex extends React.Component {
     }
 
     render() {
+        const display_label = store.getState().controls.display_label;
+
         return (
             <g
                 onDoubleClick={(e) => {
@@ -86,11 +88,12 @@ class Vertex extends React.Component {
                 />
 
                 <text
+                    display={display_label ? "block" : "none"}
                     x={this.props.x}
                     y={this.props.y}
                     textAnchor="middle"
                     alignmentBaseline="central">
-                    {this.props.id}
+                    {this.props.label}
                 </text>
             </g>
         );
@@ -132,7 +135,7 @@ class Graph extends React.Component {
                         y: e.nativeEvent.offsetY
                     });
                 }}
-                
+
                 onMouseMove={(e) => {
                     store.dispatch({
                         type: 'MOUSE_MOVE',
