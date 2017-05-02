@@ -6,7 +6,6 @@ const controls = (state = ['MOVE'], action) => {
         case 'MOVE':
         case 'DELETE':
         case 'ADD_EDGES':
-            console.log(state);
             return action.type;
         default:
             return state;

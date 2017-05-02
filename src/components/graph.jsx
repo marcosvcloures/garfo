@@ -17,10 +17,7 @@ class Edge extends React.Component {
 
         const from = vertexList.find(e => e.id == this.props.from);
         const to = vertexList.find(e => e.id == this.props.to);
-
-        console.log(from);
-        console.log(to);
-
+        
         return (
             <g>
                 <line x1={(to.x + from.x) / 2}
