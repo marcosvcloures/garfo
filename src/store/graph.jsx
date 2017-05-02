@@ -1,3 +1,5 @@
+import { store } from "./index.jsx"
+
 let nextVertexId = 0;
 let nextEdgeId = 0;
 let selectedVertex = false;
@@ -16,6 +18,11 @@ function unselectVertices(state) {
 }
 
 const graph = (state = [], action) => {
+    if(action.from != 'GRAPH')
+        return state;
+    
+    const controlsState = store.getState().controls;
+
     switch (action.type) {
         case 'SELECT_VERTEX':
             unselectVertices(state);
@@ -33,24 +40,8 @@ const graph = (state = [], action) => {
             counterOutterClicks = 0;
 
             return state;
-        case 'MOUSE_UP_VERTEX':
-            selectedVertex = true;
-            mouseUpId = action.id;
-            counterOutterClicks = 0;
-            
-            if (mouseDownId != -1 && mouseUpId != -1)
-                state.map((e) => {
-                    if (e.id == mouseDownId)
-                        e.adjacentes = [...e.adjacentes, { id: nextEdgeId++, to: mouseUpId }];
-                });
-
-            mouseDownId = mouseUpId = -1;
-
-            return state;
-        case 'MOUSE_BLANK':
-            if (selectedVertex && counterOutterClicks < 1) {
-                counterOutterClicks = 0;
-
+        case 'MOUSE_MOVE':
+            if (mouseDownId != -1 && controlsState == 'MOVE')
                 return state.map(e => {
                     if (e.id == mouseDownId) {
                         e.x = action.x;
@@ -59,6 +50,29 @@ const graph = (state = [], action) => {
 
                     return e;
                 });
+
+            return state;
+        case 'MOUSE_UP_VERTEX':
+            selectedVertex = true;
+            mouseUpId = action.id;
+            counterOutterClicks = 0;
+            
+            if(mouseDownId != -1 && mouseUpId != mouseDownId) 
+                state.map(e => {
+                    if(e.id == mouseDownId) 
+                        e.adjacentes = [...e.adjacentes, mouseUpId];
+                    return e;
+                });
+            
+
+            mouseDownId = mouseUpId = -1;
+
+            return state;
+        case 'MOUSE_BLANK':
+            if (selectedVertex && counterOutterClicks < 1) {
+                counterOutterClicks = 0;
+
+                return state;
             }
 
             selectedVertex = false;

@@ -18,6 +18,9 @@ class Edge extends React.Component {
         const from = vertexList.find(e => e.id == this.props.from);
         const to = vertexList.find(e => e.id == this.props.to);
 
+        console.log(from);
+        console.log(to);
+
         return (
             <g>
                 <line x1={(to.x + from.x) / 2}
@@ -52,9 +55,10 @@ class Vertex extends React.Component {
     render() {
         return (
             <g
-                onClick={(e) => {
+                onDoubleClick={(e) => {
                     store.dispatch({
                         type: 'SELECT_VERTEX',
+                        from: 'GRAPH',
                         id: this.props.id
                     });
                 }}
@@ -62,6 +66,7 @@ class Vertex extends React.Component {
                 onMouseDown={(e) => {
                     store.dispatch({
                         type: 'MOUSE_DOWN_VERTEX',
+                        from: 'GRAPH',
                         id: this.props.id
                     });
                 }}
@@ -69,6 +74,7 @@ class Vertex extends React.Component {
                 onMouseUp={(e) => {
                     store.dispatch({
                         type: 'MOUSE_UP_VERTEX',
+                        from: 'GRAPH',
                         id: this.props.id
                     });
                 }}>
@@ -115,6 +121,7 @@ class Graph extends React.Component {
 
                     store.dispatch({
                         type: 'ADD_VERTEX',
+                        from: 'GRAPH',
                         x: e.nativeEvent.offsetX,
                         y: e.nativeEvent.offsetY
                     })
@@ -123,6 +130,16 @@ class Graph extends React.Component {
                 onMouseUp={(e) => {
                     store.dispatch({
                         type: 'MOUSE_BLANK',
+                        from: 'GRAPH',
+                        x: e.nativeEvent.offsetX,
+                        y: e.nativeEvent.offsetY
+                    });
+                }}
+                
+                onMouseMove={(e) => {
+                    store.dispatch({
+                        type: 'MOUSE_MOVE',
+                        from: 'GRAPH',
                         x: e.nativeEvent.offsetX,
                         y: e.nativeEvent.offsetY
                     });
@@ -141,7 +158,7 @@ class Graph extends React.Component {
                     </marker>
                 </defs>
 
-                {vertexList.map(e => { return e.adjacentes.map(p => { return <Edge key={p.id} from={e.id} {...p} /> }) })}
+                {vertexList.map(e => { return e.adjacentes.map(p => { return <Edge key={p.id} from={e.id} to={p} {...p} /> }) })}
 
                 {vertexList.map(e => { return <Vertex key={e.id} {...e} /> })}
             </svg>

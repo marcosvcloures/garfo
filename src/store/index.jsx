@@ -1,8 +1,9 @@
 import { createStore, combineReducers } from "redux";
 
 import { graph } from "./graph.jsx";
+import { controls } from "./controls.jsx";
 
-const reducers = combineReducers({graph});
+const reducers = combineReducers({controls, graph});
 
 const store = createStore(reducers);
 
