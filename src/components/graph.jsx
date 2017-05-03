@@ -18,18 +18,19 @@ class Edge extends React.Component {
         const from = vertexList.find(e => e.id == this.props.from);
         const to = vertexList.find(e => e.id == this.props.to);
 
+        const deltaX = to.x - from.x;
+        const deltaY = to.y - from.y;
+        
+        const lineLenght = Math.sqrt(deltaX*deltaX + deltaY*deltaY)
+
+        const v =  (lineLenght - 50) / lineLenght;
+
         return (
             <g>
-                <line x1={(to.x + from.x) / 2}
-                    y1={(to.y + from.y) / 2}
-                    x2={to.x}
-                    y2={to.y}
-                    strokeWidth="5"
-                    stroke="black" />
                 <line x1={from.x}
                     y1={from.y}
-                    x2={(to.x + from.x) / 2}
-                    y2={(to.y + from.y) / 2}
+                    x2={from.x + deltaX * v}
+                    y2={from.y + deltaY * v}
                     strokeWidth="5"
                     stroke="black"
                     markerEnd="url(#arrow)" />
@@ -149,12 +150,12 @@ class Graph extends React.Component {
                     <marker id="arrow"
                         markerWidth="10"
                         markerHeight="10"
-                        refX="0"
+                        refX="3"
                         refY="3"
                         orient="auto"
                         markerUnits="strokeWidth"
                         viewBox="0 0 20 20">
-                        <path d="M0,0 L0,6 L9,3 z" fill="#f00" />
+                        <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
                     </marker>
                 </defs>
 
