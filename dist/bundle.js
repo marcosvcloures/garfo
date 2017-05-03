@@ -11502,20 +11502,21 @@ class Edge extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
         const from = vertexList.find(e => e.id == this.props.from);
         const to = vertexList.find(e => e.id == this.props.to);
 
+        const deltaX = to.x - from.x;
+        const deltaY = to.y - from.y;
+
+        const lineLenght = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        const v = (lineLenght - 50) / lineLenght;
+
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "g",
             null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("line", { x1: (to.x + from.x) / 2,
-                y1: (to.y + from.y) / 2,
-                x2: to.x,
-                y2: to.y,
-                strokeWidth: "5",
-                stroke: "black" }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("line", { x1: from.x,
                 y1: from.y,
-                x2: (to.x + from.x) / 2,
-                y2: (to.y + from.y) / 2,
-                strokeWidth: "5",
+                x2: from.x + deltaX * v,
+                y2: from.y + deltaY * v,
+                strokeWidth: "3",
                 stroke: "black",
                 markerEnd: "url(#arrow)" })
         );
@@ -11633,12 +11634,12 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                     { id: "arrow",
                         markerWidth: "10",
                         markerHeight: "10",
-                        refX: "0",
+                        refX: "2",
                         refY: "3",
                         orient: "auto",
                         markerUnits: "strokeWidth",
-                        viewBox: "0 0 20 20" },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("path", { d: "M0,0 L0,6 L9,3 z", fill: "#f00" })
+                        viewBox: "0 0 15 15" },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("path", { d: "M0,0 L2,3 L0,6 L9,3 z", fill: "#000" })
                 )
             ),
             vertexList.map(e => {

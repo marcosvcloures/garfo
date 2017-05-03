@@ -31,7 +31,7 @@ class Edge extends React.Component {
                     y1={from.y}
                     x2={from.x + deltaX * v}
                     y2={from.y + deltaY * v}
-                    strokeWidth="5"
+                    strokeWidth="3"
                     stroke="black"
                     markerEnd="url(#arrow)" />
             </g>
@@ -150,11 +150,11 @@ class Graph extends React.Component {
                     <marker id="arrow"
                         markerWidth="10"
                         markerHeight="10"
-                        refX="3"
+                        refX="2"
                         refY="3"
                         orient="auto"
                         markerUnits="strokeWidth"
-                        viewBox="0 0 20 20">
+                        viewBox="0 0 15 15">
                         <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
                     </marker>
                 </defs>
