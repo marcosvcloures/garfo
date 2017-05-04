@@ -11456,17 +11456,15 @@ class Controls extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             'div',
             { id: 'controls' },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'MOVE', text: 'Mover' }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'ADD_VERTEX', text: 'Inserir v\xE9rtices' }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'ADD_EDGES', text: 'Inserir arestas' }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'DELETE_VERTEX', text: 'Deletar v\xE9rtice' }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'ADD', text: 'Inserir' }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'DELETE', text: 'Remover' }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2_react_materialize__["Input"], { type: 'checkbox', checked: displayLabel, label: 'Motrar \xEDndice dos v\xE9rtices', onChange: e => {
                     __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
                         type: "DISPLAY_LABEL",
                         from: 'CONTROLS',
                         props: this
                     });
-                } }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2_react_materialize__["Input"], { s: 6, label: 'Nome do v\xE9rtice' })
+                } })
         );
     }
 }
@@ -11486,6 +11484,38 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 
 
+
+class EdgeEdit extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
+    componentDidMount() {
+        this.unsubscribe = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].subscribe(() => this.forceUpdate());
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    render() {
+        const vertexList = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph;
+
+        const from = vertexList.find(e => e.id == this.props.from);
+
+        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "g",
+            null,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("line", { x1: from.x,
+                y1: from.y,
+                x2: this.props.x,
+                y2: this.props.y,
+                strokeWidth: "3",
+                strokeDasharray: "5, 5",
+                stroke: "black",
+                markerEnd: "url(#arrow)",
+                onClick: e => {
+                    alert('wat');
+                } })
+        );
+    }
+}
 
 class Edge extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     componentDidMount() {
@@ -11518,7 +11548,10 @@ class Edge extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                 y2: from.y + deltaY * v,
                 strokeWidth: "3",
                 stroke: "black",
-                markerEnd: "url(#arrow)" })
+                markerEnd: "url(#arrow)",
+                onClick: e => {
+                    alert('wat');
+                } })
         );
     }
 }
@@ -11538,9 +11571,17 @@ class Vertex extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "g",
             {
+                onClick: e => {
+                    __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
+                        type: 'CLICK_VERTEX',
+                        from: 'GRAPH',
+                        id: this.props.id
+                    });
+                },
+
                 onDoubleClick: e => {
                     __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
-                        type: 'SELECT_VERTEX',
+                        type: 'DOUBLE_CLICK_VERTEX',
                         from: 'GRAPH',
                         id: this.props.id
                     });
@@ -11594,13 +11635,12 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 
     render() {
         const vertexList = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph;
+        let mouse_x, mouse_y;
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "svg",
             {
                 onClick: e => {
-                    e.preventDefault();
-
                     __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
                         type: 'ADD_VERTEX',
                         from: 'GRAPH',
@@ -11619,12 +11659,24 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                 },
 
                 onMouseMove: e => {
-                    __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
-                        type: 'MOUSE_MOVE',
-                        from: 'GRAPH',
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY
-                    });
+                    if (__WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'MOVE') {
+                        __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
+                            type: 'MOUSE_MOVE',
+                            from: 'GRAPH',
+                            x: e.nativeEvent.offsetX,
+                            y: e.nativeEvent.offsetY
+                        });
+                    } else if (__WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'ADD') {
+                        this.mouse_x = e.nativeEvent.offsetX;
+                        this.mouse_y = e.nativeEvent.offsetY;
+
+                        __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
+                            type: 'MOUSE_MOVE',
+                            from: 'GRAPH',
+                            x: e.nativeEvent.offsetX,
+                            y: e.nativeEvent.offsetY
+                        });
+                    }
                 } },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 "defs",
@@ -11642,6 +11694,7 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("path", { d: "M0,0 L2,3 L0,6 L9,3 z", fill: "#000" })
                 )
             ),
+            __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.mouseDownVertex == true && __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'ADD' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EdgeEdit, { key: 0, from: __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.mouseDownId, x: this.mouse_x, y: this.mouse_y }) : null,
             vertexList.map(e => {
                 return e.adjacentes.map(p => {
                     return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(Edge, _extends({ key: p.id, from: e.id, to: p }, p));
@@ -11750,14 +11803,13 @@ __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return controls; });
-const controls = (state = { action: 'ADD_VERTEX', display_label: true }, action) => {
+const controls = (state = { action: 'ADD', display_label: true }, action) => {
     if (action.from != 'CONTROLS') return state;
 
     switch (action.type) {
         case 'MOVE':
-        case 'DELETE_VERTEX':
-        case 'ADD_EDGES':
-        case 'ADD_VERTEX':
+        case 'DELETE':
+        case 'ADD':
             state.action = action.type;
 
             return state;
@@ -11804,8 +11856,8 @@ const graph = (state = [], action) => {
     const controlsState = __WEBPACK_IMPORTED_MODULE_0__index_jsx__["a" /* store */].getState().controls.action;
 
     switch (action.type) {
-        case 'SELECT_VERTEX':
-            if (controlsState == 'DELETE_VERTEX') {
+        case 'DOUBLE_CLICK_VERTEX':
+            if (controlsState == 'DELETE') {
                 return state.filter(e => {
                     if (e.id != action.id) {
                         e.adjacentes = e.adjacentes.filter(p => {
@@ -11816,7 +11868,7 @@ const graph = (state = [], action) => {
                     }
                 });
             }
-
+        case 'CLICK_VERTEX':
             unselectVertices(state);
             selectedVertex = true;
             counterOutterClicks = 0;
@@ -11826,6 +11878,8 @@ const graph = (state = [], action) => {
                 return e;
             });
         case 'MOUSE_DOWN_VERTEX':
+            state.mouseDownVertex = true;
+            state.mouseDownId = action.id;
             selectedVertex = true;
             mouseDownId = action.id;
             counterOutterClicks = 0;
@@ -11843,6 +11897,7 @@ const graph = (state = [], action) => {
 
             return state;
         case 'MOUSE_UP_VERTEX':
+            state.mouseDownVertex = false;
             selectedVertex = true;
             mouseUpId = action.id;
             counterOutterClicks = 0;
@@ -11856,11 +11911,12 @@ const graph = (state = [], action) => {
 
             return state;
         case 'MOUSE_BLANK':
+            state.mouseDownVertex = false;
             mouseDownId = mouseUpId = -1;
 
             return state;
         case 'ADD_VERTEX':
-            if (controlsState != 'ADD_VERTEX') return state;
+            if (controlsState != 'ADD') return state;
 
             if (selectedVertex && counterOutterClicks < 1) {
                 counterOutterClicks++;
