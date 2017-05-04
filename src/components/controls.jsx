@@ -42,15 +42,13 @@ class Controls extends React.Component {
         return (
             <div id="controls">
                 <ControlsItem dispatch="MOVE" text="Mover" />
-                <ControlsItem dispatch="ADD_VERTEX" text="Inserir vértices" />
-                <ControlsItem dispatch="ADD_EDGES" text="Inserir arestas" />
-                <ControlsItem dispatch="DELETE_VERTEX" text="Deletar vértice" />
+                <ControlsItem dispatch="ADD" text="Inserir" />
+                <ControlsItem dispatch="DELETE" text="Remover" />
                 <Input type='checkbox' checked={displayLabel} label='Motrar índice dos vértices' onChange={e => {store.dispatch({
                     type: "DISPLAY_LABEL",
                     from: 'CONTROLS',
                     props: this
                 })}} />
-                <Input s={6} label="Nome do vértice" />
             </div>
         );
     }

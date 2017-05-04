@@ -24,8 +24,8 @@ const graph = (state = [], action) => {
     const controlsState = store.getState().controls.action;
 
     switch (action.type) {
-        case 'SELECT_VERTEX':
-            if (controlsState == 'DELETE_VERTEX') {
+        case 'DOUBLE_CLICK_VERTEX':
+            if (controlsState == 'DELETE') {
                 return state.filter(e => {
                     if (e.id != action.id) {
                         e.adjacentes = e.adjacentes.filter(p => {
@@ -37,7 +37,7 @@ const graph = (state = [], action) => {
                     }
                 });
             }
-
+        case 'CLICK_VERTEX':
             unselectVertices(state);
             selectedVertex = true;
             counterOutterClicks = 0;
@@ -48,6 +48,8 @@ const graph = (state = [], action) => {
                 return e;
             });
         case 'MOUSE_DOWN_VERTEX':
+            state.mouseDownVertex = true;
+            state.mouseDownId = action.id;
             selectedVertex = true;
             mouseDownId = action.id;
             counterOutterClicks = 0;
@@ -66,6 +68,7 @@ const graph = (state = [], action) => {
 
             return state;
         case 'MOUSE_UP_VERTEX':
+            state.mouseDownVertex = false;
             selectedVertex = true;
             mouseUpId = action.id;
             counterOutterClicks = 0;
@@ -81,11 +84,12 @@ const graph = (state = [], action) => {
 
             return state;
         case 'MOUSE_BLANK':
+            state.mouseDownVertex = false;
             mouseDownId = mouseUpId = -1;
 
             return state;
         case 'ADD_VERTEX':
-            if (controlsState != 'ADD_VERTEX')
+            if (controlsState != 'ADD')
                 return state;
 
             if (selectedVertex && counterOutterClicks < 1) {
