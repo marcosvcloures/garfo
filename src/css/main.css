@@ -9,6 +9,10 @@ svg {
     height: 100%;
 }
 
+svg text {
+    pointer-events: none;
+}
+
 .fullHeight {
     height: 100%;
     padding: 10px 0;

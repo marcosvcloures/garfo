@@ -37,8 +37,9 @@ class Controls extends React.Component {
     }
 
     render() {
-        const displayLabel = store.getState().controls.display_label;
-
+        const displayLabel = store.getState().controls.displayLabel;
+        const directionalEdges = store.getState().controls.directionalEdges;
+        
         return (
             <div id="controls">
                 <ControlsItem dispatch="MOVE" text="Mover" />
@@ -46,6 +47,11 @@ class Controls extends React.Component {
                 <ControlsItem dispatch="DELETE" text="Remover" />
                 <Input type='checkbox' checked={displayLabel} label='Motrar índice dos vértices' onChange={e => {store.dispatch({
                     type: "DISPLAY_LABEL",
+                    from: 'CONTROLS',
+                    props: this
+                })}} />
+                <Input type='checkbox' checked={directionalEdges} label='Arestas direcionais' onChange={e => {store.dispatch({
+                    type: "DIRECTIONAL_EDGES",
                     from: 'CONTROLS',
                     props: this
                 })}} />

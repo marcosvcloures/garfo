@@ -11450,7 +11450,8 @@ class Controls extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     }
 
     render() {
-        const displayLabel = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.display_label;
+        const displayLabel = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.displayLabel;
+        const directionalEdges = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.directionalEdges;
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
@@ -11461,6 +11462,13 @@ class Controls extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2_react_materialize__["Input"], { type: 'checkbox', checked: displayLabel, label: 'Motrar \xEDndice dos v\xE9rtices', onChange: e => {
                     __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
                         type: "DISPLAY_LABEL",
+                        from: 'CONTROLS',
+                        props: this
+                    });
+                } }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2_react_materialize__["Input"], { type: 'checkbox', checked: directionalEdges, label: 'Arestas direcionais', onChange: e => {
+                    __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
+                        type: "DIRECTIONAL_EDGES",
                         from: 'CONTROLS',
                         props: this
                     });
@@ -11486,69 +11494,38 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 
 class EdgeEdit extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
-    componentDidMount() {
-        this.unsubscribe = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].subscribe(() => this.forceUpdate());
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
     render() {
-        const vertexList = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph;
-
-        const from = vertexList.find(e => e.id == this.props.from);
+        const directionalEdges = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.directionalEdges;
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "g",
             null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("line", { x1: from.x,
-                y1: from.y,
-                x2: this.props.x,
-                y2: this.props.y,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("line", { x1: this.props.from.x,
+                y1: this.props.from.y,
+                x2: this.props.to.x,
+                y2: this.props.to.y,
                 strokeWidth: "3",
                 strokeDasharray: "5, 5",
                 stroke: "black",
-                markerEnd: "url(#arrow)",
-                onClick: e => {
-                    alert('wat');
-                } })
+                markerEnd: directionalEdges ? "url(#arrowEdit)" : null })
         );
     }
 }
 
 class Edge extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
-    componentDidMount() {
-        this.unsubscribe = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].subscribe(() => this.forceUpdate());
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
     render() {
-        const vertexList = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph;
-
-        const from = vertexList.find(e => e.id == this.props.from);
-        const to = vertexList.find(e => e.id == this.props.to);
-
-        const deltaX = to.x - from.x;
-        const deltaY = to.y - from.y;
-
-        const lineLenght = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-        const v = (lineLenght - 50) / lineLenght;
+        const directionalEdges = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.directionalEdges;
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "g",
             null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("line", { x1: from.x,
-                y1: from.y,
-                x2: from.x + deltaX * v,
-                y2: from.y + deltaY * v,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("line", { x1: this.props.from.x,
+                y1: this.props.from.y,
+                x2: this.props.to.x,
+                y2: this.props.to.y,
                 strokeWidth: "3",
                 stroke: "black",
-                markerEnd: "url(#arrow)",
+                markerEnd: directionalEdges ? "url(#arrow)" : null,
                 onClick: e => {
                     alert('wat');
                 } })
@@ -11557,28 +11534,12 @@ class Edge extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 }
 
 class Vertex extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
-    componentDidMount() {
-        this.unsubscribe = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].subscribe(() => this.forceUpdate());
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
     render() {
-        const display_label = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.display_label;
+        const displayLabel = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.displayLabel;
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "g",
             {
-                onClick: e => {
-                    __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
-                        type: 'CLICK_VERTEX',
-                        from: 'GRAPH',
-                        id: this.props.id
-                    });
-                },
-
                 onDoubleClick: e => {
                     __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
                         type: 'DOUBLE_CLICK_VERTEX',
@@ -11605,7 +11566,7 @@ class Vertex extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("circle", {
                 cx: this.props.x,
                 cy: this.props.y,
-                r: "40",
+                r: "20",
                 stroke: "black",
                 strokeWidth: "3",
                 fill: this.props.selected ? "red" : "white"
@@ -11613,7 +11574,7 @@ class Vertex extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 "text",
                 {
-                    display: display_label ? "block" : "none",
+                    display: displayLabel ? "block" : "none",
                     x: this.props.x,
                     y: this.props.y,
                     textAnchor: "middle",
@@ -11634,24 +11595,17 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     }
 
     render() {
-        const vertexList = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph;
-        let mouse_x, mouse_y;
+        const vertexList = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.vertexList;
+        const edgeList = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.edgeList;
+
+        let mouseX, mouseY;
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "svg",
             {
                 onClick: e => {
                     __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
-                        type: 'ADD_VERTEX',
-                        from: 'GRAPH',
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY
-                    });
-                },
-
-                onMouseUp: e => {
-                    __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
-                        type: 'MOUSE_BLANK',
+                        type: 'CLICK_SVG',
                         from: 'GRAPH',
                         x: e.nativeEvent.offsetX,
                         y: e.nativeEvent.offsetY
@@ -11659,16 +11613,9 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                 },
 
                 onMouseMove: e => {
-                    if (__WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'MOVE') {
-                        __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
-                            type: 'MOUSE_MOVE',
-                            from: 'GRAPH',
-                            x: e.nativeEvent.offsetX,
-                            y: e.nativeEvent.offsetY
-                        });
-                    } else if (__WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'ADD') {
-                        this.mouse_x = e.nativeEvent.offsetX;
-                        this.mouse_y = e.nativeEvent.offsetY;
+                    if (__WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'ADD' || __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'MOVE') {
+                        this.mouseX = e.nativeEvent.offsetX;
+                        this.mouseY = e.nativeEvent.offsetY;
 
                         __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
                             type: 'MOUSE_MOVE',
@@ -11686,6 +11633,18 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                     { id: "arrow",
                         markerWidth: "10",
                         markerHeight: "10",
+                        refX: "18",
+                        refY: "3",
+                        orient: "auto",
+                        markerUnits: "strokeWidth",
+                        viewBox: "0 0 15 15" },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("path", { d: "M0,0 L2,3 L0,6 L9,3 z", fill: "#000" })
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    "marker",
+                    { id: "arrowEdit",
+                        markerWidth: "10",
+                        markerHeight: "10",
                         refX: "2",
                         refY: "3",
                         orient: "auto",
@@ -11694,12 +11653,15 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("path", { d: "M0,0 L2,3 L0,6 L9,3 z", fill: "#000" })
                 )
             ),
-            __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.mouseDownVertex == true && __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'ADD' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EdgeEdit, { key: 0, from: __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.mouseDownId, x: this.mouse_x, y: this.mouse_y }) : null,
-            vertexList.map(e => {
-                return e.adjacentes.map(p => {
-                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(Edge, _extends({ key: p.id, from: e.id, to: p }, p));
-                });
+            __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.mouseDownVertex == true && __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().controls.action == 'ADD' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EdgeEdit, { key: 0,
+                from: vertexList.find(e => {
+                    return e.id == __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.mouseDownId;
+                }),
+                to: { x: this.mouseX, y: this.mouseY } }) : null,
+            edgeList.map(e => {
+                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(Edge, _extends({ key: e.id }, e));
             }),
+            ")}",
             vertexList.map(e => {
                 return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(Vertex, _extends({ key: e.id }, e));
             })
@@ -11803,20 +11765,20 @@ __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return controls; });
-const controls = (state = { action: 'ADD', display_label: true }, action) => {
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+const controls = (state = { action: 'ADD', displayLabel: true, directionalEdges: true }, action) => {
     if (action.from != 'CONTROLS') return state;
 
     switch (action.type) {
         case 'MOVE':
         case 'DELETE':
         case 'ADD':
-            state.action = action.type;
-
-            return state;
+            return _extends({}, state, { action: action.type });
         case 'DISPLAY_LABEL':
-            state.display_label = !state.display_label;
-
-            return state;
+            return _extends({}, state, { displayLabel: !state.displayLabel });
+        case 'DIRECTIONAL_EDGES':
+            return _extends({}, state, { directionalEdges: !state.directionalEdges });
         default:
             return state;
     }
@@ -11831,26 +11793,15 @@ const controls = (state = { action: 'ADD', display_label: true }, action) => {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_jsx__ = __webpack_require__(32);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return graph; });
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 
 
 let nextVertexId = 0;
 let nextEdgeId = 0;
-let selectedVertex = false;
-let counterOutterClicks = 0;
-let mouseDownId = -1;
 let mouseUpId = -1;
 
-function unselectVertices(state) {
-    counterOutterClicks = 0;
-    selectedVertex = false;
-
-    state.map(e => {
-        e.selected = false;
-        return e;
-    });
-}
-
-const graph = (state = [], action) => {
+const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false }, action) => {
     if (action.from != 'GRAPH') return state;
 
     const controlsState = __WEBPACK_IMPORTED_MODULE_0__index_jsx__["a" /* store */].getState().controls.action;
@@ -11858,81 +11809,61 @@ const graph = (state = [], action) => {
     switch (action.type) {
         case 'DOUBLE_CLICK_VERTEX':
             if (controlsState == 'DELETE') {
-                return state.filter(e => {
-                    if (e.id != action.id) {
-                        e.adjacentes = e.adjacentes.filter(p => {
-                            if (p != action.id) return p;
-                        });
-
-                        return e;
-                    }
+                return _extends({}, state, {
+                    vertexList: state.vertexList.filter(e => {
+                        if (e.id != action.id) return e;
+                    }),
+                    edgeList: state.edgeList.filter(e => {
+                        if (e.from.id != action.id && e.to.id != action.id) return e;
+                    })
                 });
             }
-        case 'CLICK_VERTEX':
-            unselectVertices(state);
-            selectedVertex = true;
-            counterOutterClicks = 0;
-
-            return state.map(e => {
-                if (e.id == action.id) e.selected = true;
-                return e;
-            });
-        case 'MOUSE_DOWN_VERTEX':
-            state.mouseDownVertex = true;
-            state.mouseDownId = action.id;
-            selectedVertex = true;
-            mouseDownId = action.id;
-            counterOutterClicks = 0;
 
             return state;
+        case 'MOUSE_DOWN_VERTEX':
+            return _extends({}, state, { mouseDownVertex: true, mouseDownId: action.id });
         case 'MOUSE_MOVE':
-            if (mouseDownId != -1 && controlsState == 'MOVE') return state.map(e => {
-                if (e.id == mouseDownId) {
-                    e.x = action.x;
-                    e.y = action.y;
-                }
+            if (state.mouseDownVertex && controlsState == 'MOVE') {
+                return _extends({}, state, {
+                    vertexList: state.vertexList.map(e => {
+                        if (e.id == state.mouseDownId) {
+                            e.x = action.x;
+                            e.y = action.y;
+                        }
 
-                return e;
-            });
+                        return e;
+                    })
+                });
+            }
 
             return state;
         case 'MOUSE_UP_VERTEX':
-            state.mouseDownVertex = false;
-            selectedVertex = true;
-            mouseUpId = action.id;
-            counterOutterClicks = 0;
-
-            if (mouseDownId != -1 && mouseUpId != mouseDownId) state.map(e => {
-                if (e.id == mouseDownId) e.adjacentes = [...e.adjacentes, mouseUpId];
-                return e;
+            if (state.mouseDownVertex && controlsState == 'ADD') return _extends({}, state, {
+                edgeList: [...state.edgeList, {
+                    id: nextEdgeId++,
+                    from: state.vertexList.find(e => {
+                        return e.id == state.mouseDownId;
+                    }),
+                    to: state.vertexList.find(e => {
+                        return e.id == action.id;
+                    })
+                }]
             });
 
-            mouseDownId = mouseUpId = -1;
+            return _extends({}, state);
+        case 'CLICK_SVG':
+            if (controlsState != 'ADD' || state.mouseDownVertex == true) return _extends({}, state, { mouseDownVertex: false });
 
-            return state;
-        case 'MOUSE_BLANK':
-            state.mouseDownVertex = false;
-            mouseDownId = mouseUpId = -1;
-
-            return state;
-        case 'ADD_VERTEX':
-            if (controlsState != 'ADD') return state;
-
-            if (selectedVertex && counterOutterClicks < 1) {
-                counterOutterClicks++;
-                return state;
-            }
-
-            unselectVertices(state);
-
-            return [...state, {
-                id: nextVertexId++,
-                label: nextVertexId,
-                adjacentes: [],
-                x: action.x,
-                y: action.y,
-                selected: false
-            }];
+            return _extends({}, state, {
+                vertexList: [...state.vertexList, {
+                    id: nextVertexId++,
+                    label: nextVertexId,
+                    adjacentes: [],
+                    x: action.x,
+                    y: action.y,
+                    selected: false
+                }]
+            });
         default:
             return state;
     }
@@ -13867,7 +13798,7 @@ exports = module.exports = __webpack_require__(112)(undefined);
 
 
 // module
-exports.push([module.i, "html, body, #app {\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.fullHeight {\r\n    height: 100%;\r\n    padding: 10px 0;\r\n}\r\n\r\n#controls button {\r\n    width: 100%;\r\n}\r\n\r\nbutton.btn.active {\r\n    background: #0d6d64;\r\n}\r\n\r\n[type=\"checkbox\"]+label {\r\n    font-size: 14px;\r\n}\r\n\r\ninput[type=\"text\"] {\r\n    font-size: 14px;\r\n}\r\n", ""]);
+exports.push([module.i, "html, body, #app {\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg text {\r\n    pointer-events: none;\r\n}\r\n\r\n.fullHeight {\r\n    height: 100%;\r\n    padding: 10px 0;\r\n}\r\n\r\n#controls button {\r\n    width: 100%;\r\n}\r\n\r\nbutton.btn.active {\r\n    background: #0d6d64;\r\n}\r\n\r\n[type=\"checkbox\"]+label {\r\n    font-size: 14px;\r\n}\r\n\r\ninput[type=\"text\"] {\r\n    font-size: 14px;\r\n}\r\n", ""]);
 
 // exports
 
