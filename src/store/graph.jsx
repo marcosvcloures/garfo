@@ -1,10 +1,6 @@
 import { store } from "./index.jsx"
 
-let nextVertexId = 0;
-let nextEdgeId = 0;
-let mouseUpId = -1;
-
-const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false }, action) => {
+const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, nextVertexId: 0, nextEdgeId: 0 }, action) => {
     if (action.from != 'GRAPH')
         return state;
 
@@ -50,10 +46,11 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false },
                 return {
                     ...state,
                     edgeList: [...state.edgeList, {
-                        id: nextEdgeId++,
+                        id: state.nextEdgeId,
                         from: state.vertexList.find(e => { return e.id == state.mouseDownId; }),
                         to: state.vertexList.find(e => { return e.id == action.id; })
                     }],
+                    nextEdgeId: state.nextEdgeId + 1
                 };
 
             return { ...state };
@@ -64,13 +61,14 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false },
             return {
                 ...state,
                 vertexList: [...state.vertexList, {
-                    id: nextVertexId++,
-                    label: nextVertexId,
+                    id: state.nextVertexId,
+                    label: state.nextVertexId,
                     adjacentes: [],
                     x: action.x,
                     y: action.y,
                     selected: false
-                }]
+                }],
+                nextVertexId: state.nextVertexId + 1
             };
         default:
             return state;

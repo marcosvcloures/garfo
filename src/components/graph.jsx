@@ -105,8 +105,9 @@ class Graph extends React.Component {
     }
 
     render() {
-        const vertexList = store.getState().graph.vertexList;
-        const edgeList = store.getState().graph.edgeList;
+        const graphState = store.getState().graph.present;
+        const vertexList = graphState.vertexList;
+        const edgeList = graphState.edgeList;
 
         let mouseX, mouseY;
 
@@ -158,14 +159,14 @@ class Graph extends React.Component {
                     </marker>
                 </defs>
 
-                {store.getState().graph.mouseDownVertex == true && store.getState().controls.action == 'ADD' ?
+                {graphState.mouseDownVertex == true && store.getState().controls.action == 'ADD' ?
                     <EdgeEdit key={0}
-                        from={vertexList.find(e => { return e.id == store.getState().graph.mouseDownId })}
+                        from={vertexList.find(e => { return e.id == graphState.mouseDownId })}
                         to={{ x: this.mouseX, y: this.mouseY }} />
                     :
                     null}
 
-                {edgeList.map(e => { return <Edge key={e.id} {...e} /> })})}
+                { edgeList.map(e => { return <Edge key={e.id} {...e} /> })})}
 
                 {vertexList.map(e => { return <Vertex key={e.id} {...e} /> })}
             </svg>

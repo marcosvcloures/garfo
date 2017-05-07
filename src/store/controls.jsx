@@ -3,6 +3,7 @@ const controls = (state = { action: 'ADD', displayLabel: true, directionalEdges:
         return state;
 
     switch (action.type) {
+        case 'SELECT':
         case 'MOVE':
         case 'DELETE':
         case 'ADD':
