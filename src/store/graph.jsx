@@ -63,7 +63,6 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
                 vertexList: [...state.vertexList, {
                     id: state.nextVertexId,
                     label: state.nextVertexId,
-                    adjacentes: [],
                     x: action.x,
                     y: action.y,
                     selected: false

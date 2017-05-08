@@ -22,15 +22,13 @@ class ControlsItem extends React.Component {
                 type: this.props.dispatch,
                 from: 'CONTROLS'
             });
-        }}>{this.props.text}</Button>
+        }}>{this.props.text.map}</Button>
     }
 
 }
 
 class Controls extends React.Component {
     handleKeyPress = e => {
-        console.log(e);
-        
         if (e.code == "KeyZ" && e.ctrlKey)
             return store.dispatch(ActionCreators.undo());
         if (e.code == "KeyY" && e.ctrlKey)
@@ -77,7 +75,7 @@ class Controls extends React.Component {
 
         return (
             <div id="controls">
-                <ControlsItem dispatch="SELECT" text="Selecionar" />
+                <ControlsItem dispatch="SELECT" text="&Selecionar" />
                 <ControlsItem dispatch="MOVE" text="Mover" />
                 <ControlsItem dispatch="ADD" text="Inserir" />
                 <ControlsItem dispatch="DELETE" text="Remover" />
