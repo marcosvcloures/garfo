@@ -22,7 +22,7 @@ class ControlsItem extends React.Component {
                 type: this.props.dispatch,
                 from: 'CONTROLS'
             });
-        }}>{this.props.text.map}</Button>
+        }}>{this.props.text}</Button>
     }
 
 }
@@ -75,10 +75,10 @@ class Controls extends React.Component {
 
         return (
             <div id="controls">
-                <ControlsItem dispatch="SELECT" text="&Selecionar" />
-                <ControlsItem dispatch="MOVE" text="Mover" />
-                <ControlsItem dispatch="ADD" text="Inserir" />
-                <ControlsItem dispatch="DELETE" text="Remover" />
+                <ControlsItem dispatch="SELECT" text={[<u>S</u>, "elecionar"]} />
+                <ControlsItem dispatch="MOVE" text={[<u>M</u>, "over"]} />
+                <ControlsItem dispatch="ADD" text={[<u>I</u>, "nserir"]} />
+                <ControlsItem dispatch="DELETE" text={[<u>R</u>, "emover"]} />
                 <Input type='checkbox' checked={displayLabel} label='Motrar índice dos vértices' onChange={e => {
                     store.dispatch({
                         type: "DISPLAY_LABEL",

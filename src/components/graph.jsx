@@ -1,5 +1,7 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { store } from "../store/index.jsx";
+import { Row, Input } from 'react-materialize';
 
 class EdgeEdit extends React.Component {
     render() {
@@ -31,13 +33,82 @@ class Edge extends React.Component {
                     x2={this.props.to.x}
                     y2={this.props.to.y}
                     strokeWidth="3"
+                    strokeDasharray={store.getState().graph.edgeSelected != null ? "5, 5" : "0"}
                     stroke="black"
                     markerEnd={directionalEdges ? "url(#arrow)" : null}
                     onClick={e => {
-                        alert('wat');
+                        e.preventDefault();
+
+                        store.dispatch({
+                            type: 'CLICK_EDGE',
+                            from: 'GRAPH',
+                            id: this.props.id
+                        })
+                    }}
+
+                    onDoubleClick={e => {
+                        e.preventDefault();
+
+                        store.dispatch({
+                            type: 'DOUBLE_CLICK_EDGE',
+                            from: 'GRAPH',
+                            id: this.props.id
+                        })
                     }} />
             </g>
         );
+    }
+}
+
+class VertexProps extends React.Component {
+    componentDidMount() {
+        console.log("w");
+        ReactDOM.findDOMNode(this).style.opacity = 1;
+    }
+
+    render() {
+        return <div className="modal">
+            <div className="modal-content">
+                <h4>Editar vértice</h4>
+                <p>
+                    <Row>
+                        <Input label="Nome do vértice" id="asdf" onChange={
+                            (e) => { console.log(e.tagert); console.log(this); this.setState({ label: e.tagert.value }) }
+                        } />
+                    </Row>
+                </p>
+            </div>
+            <div className="modal-footer">
+                <button className="modal-action modal-close waves-effect waves-green btn-flat"
+                    onClick={(e) => {
+                        console.log(this);
+                        ReactDOM.findDOMNode(this).style.opacity = 0;
+
+                        setTimeout((p) => {
+                            store.dispatch({
+                                type: 'SAVE_VERTEX',
+                                from: 'GRAPH'
+                            })
+                        }, 500)
+                    }}>
+                    Salvar
+                    </button>
+                <button className="modal-action modal-close waves-effect waves-red btn-flat"
+                    style={{ marginRight: "5px" }}
+                    onClick={(e) => {
+                        ReactDOM.findDOMNode(this).style.opacity = 0;
+
+                        setTimeout((p) => {
+                            store.dispatch({
+                                type: 'SAVE_VERTEX',
+                                from: 'GRAPH'
+                            })
+                        }, 500)
+                    }}>
+                    Cancelar
+                </button>
+            </div>
+        </div>;
     }
 }
 
@@ -47,7 +118,19 @@ class Vertex extends React.Component {
 
         return (
             <g
+                onClick={(e) => {
+                    e.preventDefault();
+
+                    store.dispatch({
+                        type: 'CLICK_VERTEX',
+                        from: 'GRAPH',
+                        vertex: this.props
+                    });
+                }}
+
                 onDoubleClick={(e) => {
+                    e.preventDefault();
+
                     store.dispatch({
                         type: 'DOUBLE_CLICK_VERTEX',
                         from: 'GRAPH',
@@ -56,6 +139,8 @@ class Vertex extends React.Component {
                 }}
 
                 onMouseDown={(e) => {
+                    e.preventDefault();
+
                     store.dispatch({
                         type: 'MOUSE_DOWN_VERTEX',
                         from: 'GRAPH',
@@ -64,6 +149,8 @@ class Vertex extends React.Component {
                 }}
 
                 onMouseUp={(e) => {
+                    e.preventDefault();
+
                     store.dispatch({
                         type: 'MOUSE_UP_VERTEX',
                         from: 'GRAPH',
@@ -108,68 +195,77 @@ class Graph extends React.Component {
         const graphState = store.getState().graph.present;
         const vertexList = graphState.vertexList;
         const edgeList = graphState.edgeList;
+        const vertexEditing = graphState.vertexSelected != null;
 
         let mouseX, mouseY;
 
         return (
-            <svg
-                onClick={(e) => {
-                    store.dispatch({
-                        type: 'CLICK_SVG',
-                        from: 'GRAPH',
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY
-                    })
-                }}
+            <div className="fullHeight">
+                {vertexEditing ? <VertexProps key={0} /> : null}
 
-                onMouseMove={(e) => {
-                    if (store.getState().controls.action == 'ADD' || store.getState().controls.action == 'MOVE') {
-                        this.mouseX = e.nativeEvent.offsetX;
-                        this.mouseY = e.nativeEvent.offsetY;
+                <svg
+                    onClick={(e) => {
+                        e.preventDefault();
 
                         store.dispatch({
-                            type: 'MOUSE_MOVE',
+                            type: 'CLICK_SVG',
                             from: 'GRAPH',
                             x: e.nativeEvent.offsetX,
                             y: e.nativeEvent.offsetY
-                        });
-                    }
-                }}>
+                        })
+                    }}
 
-                <defs>
-                    <marker id="arrow"
-                        markerWidth="10"
-                        markerHeight="10"
-                        refX="18"
-                        refY="3"
-                        orient="auto"
-                        markerUnits="strokeWidth"
-                        viewBox="0 0 15 15">
-                        <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
-                    </marker>
-                    <marker id="arrowEdit"
-                        markerWidth="10"
-                        markerHeight="10"
-                        refX="2"
-                        refY="3"
-                        orient="auto"
-                        markerUnits="strokeWidth"
-                        viewBox="0 0 15 15">
-                        <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
-                    </marker>
-                </defs>
+                    onMouseMove={(e) => {
+                        e.preventDefault();
 
-                {graphState.mouseDownVertex == true && store.getState().controls.action == 'ADD' ?
-                    <EdgeEdit key={0}
-                        from={vertexList.find(e => { return e.id == graphState.mouseDownId })}
-                        to={{ x: this.mouseX, y: this.mouseY }} />
-                    :
-                    null}
+                        if (store.getState().controls.action == 'ADD' || store.getState().controls.action == 'MOVE') {
+                            this.mouseX = e.nativeEvent.offsetX;
+                            this.mouseY = e.nativeEvent.offsetY;
 
-                { edgeList.map(e => { return <Edge key={e.id} {...e} /> })})}
+                            store.dispatch({
+                                type: 'MOUSE_MOVE',
+                                from: 'GRAPH',
+                                x: e.nativeEvent.offsetX,
+                                y: e.nativeEvent.offsetY
+                            });
+                        }
+                    }}>
+
+                    <defs>
+                        <marker id="arrow"
+                            markerWidth="10"
+                            markerHeight="10"
+                            refX="18"
+                            refY="3"
+                            orient="auto"
+                            markerUnits="strokeWidth"
+                            viewBox="0 0 15 15">
+                            <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
+                        </marker>
+                        <marker id="arrowEdit"
+                            markerWidth="10"
+                            markerHeight="10"
+                            refX="2"
+                            refY="3"
+                            orient="auto"
+                            markerUnits="strokeWidth"
+                            viewBox="0 0 15 15">
+                            <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
+                        </marker>
+                    </defs>
+
+                    {graphState.mouseDownVertex == true && store.getState().controls.action == 'ADD' ?
+                        <EdgeEdit key={0}
+                            from={vertexList.find(e => { return e.id == graphState.mouseDownId })}
+                            to={{ x: this.mouseX, y: this.mouseY }} />
+                        :
+                        null}
+
+                    {edgeList.map(e => { return <Edge key={e.id} {...e} /> })})}
 
                 {vertexList.map(e => { return <Vertex key={e.id} {...e} /> })}
-            </svg>
+                </svg>
+            </div>
         );
     }
 };

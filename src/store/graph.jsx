@@ -1,12 +1,44 @@
 import { store } from "./index.jsx"
 
-const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, nextVertexId: 0, nextEdgeId: 0 }, action) => {
+const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, nextVertexId: 0, nextEdgeId: 0, edgeSelected: null, vertexSelected: null }, action) => {
     if (action.from != 'GRAPH')
         return state;
 
     const controlsState = store.getState().controls.action;
 
     switch (action.type) {
+        case 'SAVE_VERTEX':
+            return {...state, vertexSelected: null}
+        case 'CLICK_EDGE': {
+            if (controlsState == 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
+                return {
+                    ...state,
+                    edgeSelected: state.edgeList.find(e => { e.id == action.id })
+                }
+            }
+        }
+        case 'CLICK_VERTEX': {
+            if (controlsState == 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
+                console.log(action.vertex);
+                return {
+                    ...state,
+                    vertexSelected: action.vertex
+                }
+            }
+        }
+        case 'DOUBLE_CLICK_EDGE': {
+            if (controlsState == 'DELETE') {
+                return {
+                    ...state,
+                    edgeList: state.edgeList.filter(e => {
+                        if (e.id != action.id)
+                            return e;
+                    })
+                }
+            }
+
+            return state;
+        }
         case 'DOUBLE_CLICK_VERTEX':
             if (controlsState == 'DELETE') {
                 return {
@@ -56,7 +88,7 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
             return { ...state };
         case 'CLICK_SVG':
             if (controlsState != 'ADD' || state.mouseDownVertex == true)
-                return {...state, mouseDownVertex: false};
+                return { ...state, mouseDownVertex: false };
 
             return {
                 ...state,
