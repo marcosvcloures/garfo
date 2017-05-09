@@ -29,6 +29,9 @@ class ControlsItem extends React.Component {
 
 class Controls extends React.Component {
     handleKeyPress = e => {
+        if (store.getState().graph.present.vertexSelected != null)
+            return;
+
         if (e.code == "KeyZ" && e.ctrlKey)
             return store.dispatch(ActionCreators.undo());
         if (e.code == "KeyY" && e.ctrlKey)
@@ -56,7 +59,7 @@ class Controls extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('keypress', this.handleKeyPress);
+        window.addEventListener('keydown', this.handleKeyPress);
 
         this.unsubscribe = store.subscribe(() =>
             this.forceUpdate()
@@ -64,7 +67,7 @@ class Controls extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('keypress', this.handleKeyPress);
+        window.removeEventListener('keydown', this.handleKeyPress);
 
         this.unsubscribe();
     }
@@ -75,10 +78,10 @@ class Controls extends React.Component {
 
         return (
             <div id="controls">
-                <ControlsItem dispatch="SELECT" text={[<u>S</u>, "elecionar"]} />
-                <ControlsItem dispatch="MOVE" text={[<u>M</u>, "over"]} />
-                <ControlsItem dispatch="ADD" text={[<u>I</u>, "nserir"]} />
-                <ControlsItem dispatch="DELETE" text={[<u>R</u>, "emover"]} />
+                <ControlsItem dispatch="SELECT" text={[<u key={0}>S</u>, "elecionar"]} />
+                <ControlsItem dispatch="MOVE" text={[<u key={1}>M</u>, "over"]} />
+                <ControlsItem dispatch="ADD" text={[<u key={2}>I</u>, "nserir"]} />
+                <ControlsItem dispatch="DELETE" text={[<u key={3}>R</u>, "emover"]} />
                 <Input type='checkbox' checked={displayLabel} label='Motrar índice dos vértices' onChange={e => {
                     store.dispatch({
                         type: "DISPLAY_LABEL",

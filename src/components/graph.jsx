@@ -61,49 +61,71 @@ class Edge extends React.Component {
 }
 
 class VertexProps extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { label: store.getState().graph.present.vertexSelected.label };
+    }
+
     componentDidMount() {
-        console.log("w");
-        ReactDOM.findDOMNode(this).style.opacity = 1;
+        setTimeout((e) => { ReactDOM.findDOMNode(this).style.opacity = 1 });
+    }
+
+    handleKeyPress = (e) => {
+        console.log(e);
+        if (e.key === 'Enter') 
+            this.save();
+    }
+
+    save = (e) => {
+        ReactDOM.findDOMNode(this).style.opacity = 0;
+
+        setTimeout((p) => {
+            store.dispatch({
+                type: 'SAVE_VERTEX',
+                from: 'GRAPH',
+                label: this.state.label
+            })
+        }, 500);
+    }
+
+    cancel = (e) => {
+        ReactDOM.findDOMNode(this).style.opacity = 0;
+
+        setTimeout((p) => {
+            store.dispatch({
+                type: 'SAVE_VERTEX',
+                from: 'GRAPH',
+                label: store.getState().graph.present.vertexSelected.label
+            })
+        }, 500)
     }
 
     render() {
         return <div className="modal">
             <div className="modal-content">
                 <h4>Editar vértice</h4>
-                <p>
-                    <Row>
-                        <Input label="Nome do vértice" id="asdf" onChange={
-                            (e) => { console.log(e.tagert); console.log(this); this.setState({ label: e.tagert.value }) }
-                        } />
-                    </Row>
-                </p>
+                <Row>
+                    <Input label="Nome do vértice"
+                        autoFocus
+                        value={this.state.label}
+                        onKeyPress={this.handleKeyPress}
+                        onChange={
+                            (e) => { this.setState({ label: e.target.value }) }
+                        }
+                    />
+                </Row>
             </div>
             <div className="modal-footer">
                 <button className="modal-action modal-close waves-effect waves-green btn-flat"
                     onClick={(e) => {
-                        console.log(this);
-                        ReactDOM.findDOMNode(this).style.opacity = 0;
-
-                        setTimeout((p) => {
-                            store.dispatch({
-                                type: 'SAVE_VERTEX',
-                                from: 'GRAPH'
-                            })
-                        }, 500)
+                        this.save();
                     }}>
                     Salvar
                     </button>
                 <button className="modal-action modal-close waves-effect waves-red btn-flat"
                     style={{ marginRight: "5px" }}
                     onClick={(e) => {
-                        ReactDOM.findDOMNode(this).style.opacity = 0;
-
-                        setTimeout((p) => {
-                            store.dispatch({
-                                type: 'SAVE_VERTEX',
-                                from: 'GRAPH'
-                            })
-                        }, 500)
+                        this.cancel();
                     }}>
                     Cancelar
                 </button>

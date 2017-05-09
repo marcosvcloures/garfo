@@ -34,9 +34,17 @@ input[type="text"] {
     font-size: 14px;
 }
 
+[type="text"]+label {
+    font-size: 14px !important;
+}
+
 .modal {
     z-index: 1;
     display: block;
     opacity: 0;
     transition: all 0.5s;
+}
+
+.col {
+    width: 100%;
 }

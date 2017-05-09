@@ -8,7 +8,14 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
 
     switch (action.type) {
         case 'SAVE_VERTEX':
-            return {...state, vertexSelected: null}
+        console.log(action);
+            return {...state, 
+                vertexList: state.vertexList.map((e) => {
+                    if(e.id == state.vertexSelected.id) 
+                        e.label = action.label;
+                    return e;
+                }),
+                vertexSelected: null}
         case 'CLICK_EDGE': {
             if (controlsState == 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
                 return {

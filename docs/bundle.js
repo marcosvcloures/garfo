@@ -12031,6 +12031,8 @@ class Controls extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
         var _temp;
 
         return _temp = super(...args), this.handleKeyPress = e => {
+            if (__WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].getState().graph.present.vertexSelected != null) return;
+
             if (e.code == "KeyZ" && e.ctrlKey) return __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch(__WEBPACK_IMPORTED_MODULE_2_redux_undo__["ActionCreators"].undo());
             if (e.code == "KeyY" && e.ctrlKey) return __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch(__WEBPACK_IMPORTED_MODULE_2_redux_undo__["ActionCreators"].redo());
             if (e.code == "KeyS") return __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].dispatch({
@@ -12053,13 +12055,13 @@ class Controls extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('keypress', this.handleKeyPress);
+        window.addEventListener('keydown', this.handleKeyPress);
 
         this.unsubscribe = __WEBPACK_IMPORTED_MODULE_1__store_index_jsx__["a" /* store */].subscribe(() => this.forceUpdate());
     }
 
     componentWillUnmount() {
-        window.removeEventListener('keypress', this.handleKeyPress);
+        window.removeEventListener('keydown', this.handleKeyPress);
 
         this.unsubscribe();
     }
@@ -12073,22 +12075,22 @@ class Controls extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
             { id: 'controls' },
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'SELECT', text: [__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'u',
-                    null,
+                    { key: 0 },
                     'S'
                 ), "elecionar"] }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'MOVE', text: [__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'u',
-                    null,
+                    { key: 1 },
                     'M'
                 ), "over"] }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'ADD', text: [__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'u',
-                    null,
+                    { key: 2 },
                     'I'
                 ), "nserir"] }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(ControlsItem, { dispatch: 'DELETE', text: [__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'u',
-                    null,
+                    { key: 3 },
                     'R'
                 ), "emover"] }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_materialize__["Input"], { type: 'checkbox', checked: displayLabel, label: 'Motrar \xEDndice dos v\xE9rtices', onChange: e => {
@@ -12189,9 +12191,45 @@ class Edge extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 }
 
 class VertexProps extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
+    constructor(props) {
+        super(props);
+
+        this.handleKeyPress = e => {
+            console.log(e);
+            if (e.key === 'Enter') this.save();
+        };
+
+        this.save = e => {
+            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 0;
+
+            setTimeout(p => {
+                __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].dispatch({
+                    type: 'SAVE_VERTEX',
+                    from: 'GRAPH',
+                    label: this.state.label
+                });
+            }, 500);
+        };
+
+        this.cancel = e => {
+            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 0;
+
+            setTimeout(p => {
+                __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].dispatch({
+                    type: 'SAVE_VERTEX',
+                    from: 'GRAPH',
+                    label: __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].getState().graph.present.vertexSelected.label
+                });
+            }, 500);
+        };
+
+        this.state = { label: __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].getState().graph.present.vertexSelected.label };
+    }
+
     componentDidMount() {
-        console.log("w");
-        __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 1;
+        setTimeout(e => {
+            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 1;
+        });
     }
 
     render() {
@@ -12207,15 +12245,16 @@ class VertexProps extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Componen
                     "Editar v\xE9rtice"
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    "p",
+                    __WEBPACK_IMPORTED_MODULE_3_react_materialize__["Row"],
                     null,
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        __WEBPACK_IMPORTED_MODULE_3_react_materialize__["Row"],
-                        null,
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_materialize__["Input"], { label: "Nome do v\xE9rtice", id: "asdf", onChange: e => {
-                                console.log(e.tagert);console.log(this);this.setState({ label: e.tagert.value });
-                            } })
-                    )
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_materialize__["Input"], { label: "Nome do v\xE9rtice",
+                        autoFocus: true,
+                        value: this.state.label,
+                        onKeyPress: this.handleKeyPress,
+                        onChange: e => {
+                            this.setState({ label: e.target.value });
+                        }
+                    })
                 )
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -12225,15 +12264,7 @@ class VertexProps extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Componen
                     "button",
                     { className: "modal-action modal-close waves-effect waves-green btn-flat",
                         onClick: e => {
-                            console.log(this);
-                            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 0;
-
-                            setTimeout(p => {
-                                __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].dispatch({
-                                    type: 'SAVE_VERTEX',
-                                    from: 'GRAPH'
-                                });
-                            }, 500);
+                            this.save();
                         } },
                     "Salvar"
                 ),
@@ -12242,14 +12273,7 @@ class VertexProps extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Componen
                     { className: "modal-action modal-close waves-effect waves-red btn-flat",
                         style: { marginRight: "5px" },
                         onClick: e => {
-                            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 0;
-
-                            setTimeout(p => {
-                                __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].dispatch({
-                                    type: 'SAVE_VERTEX',
-                                    from: 'GRAPH'
-                                });
-                            }, 500);
+                            this.cancel();
                         } },
                     "Cancelar"
                 )
@@ -12557,7 +12581,13 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
 
     switch (action.type) {
         case 'SAVE_VERTEX':
-            return _extends({}, state, { vertexSelected: null });
+            console.log(action);
+            return _extends({}, state, {
+                vertexList: state.vertexList.map(e => {
+                    if (e.id == state.vertexSelected.id) e.label = action.label;
+                    return e;
+                }),
+                vertexSelected: null });
         case 'CLICK_EDGE':
             {
                 if (controlsState == 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
@@ -14581,7 +14611,7 @@ exports = module.exports = __webpack_require__(114)(undefined);
 
 
 // module
-exports.push([module.i, "html, body, #app {\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg text {\r\n    pointer-events: none;\r\n}\r\n\r\n.fullHeight {\r\n    height: 100%;\r\n    padding: 10px 0;\r\n}\r\n\r\n#controls button {\r\n    width: 100%;\r\n}\r\n\r\nbutton.btn.active {\r\n    background: #0d6d64;\r\n}\r\n\r\n[type=\"checkbox\"]+label {\r\n    font-size: 14px;\r\n}\r\n\r\ninput[type=\"text\"] {\r\n    font-size: 14px;\r\n}\r\n\r\n.modal {\r\n    z-index: 1;\r\n    display: block;\r\n    opacity: 0;\r\n    transition: all 0.5s;\r\n}\r\n", ""]);
+exports.push([module.i, "html, body, #app {\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg text {\r\n    pointer-events: none;\r\n}\r\n\r\n.fullHeight {\r\n    height: 100%;\r\n    padding: 10px 0;\r\n}\r\n\r\n#controls button {\r\n    width: 100%;\r\n}\r\n\r\nbutton.btn.active {\r\n    background: #0d6d64;\r\n}\r\n\r\n[type=\"checkbox\"]+label {\r\n    font-size: 14px;\r\n}\r\n\r\ninput[type=\"text\"] {\r\n    font-size: 14px;\r\n}\r\n\r\n[type=\"text\"]+label {\r\n    font-size: 14px !important;\r\n}\r\n\r\n.modal {\r\n    z-index: 1;\r\n    display: block;\r\n    opacity: 0;\r\n    transition: all 0.5s;\r\n}\r\n\r\n.col {\r\n    width: 100%;\r\n}", ""]);
 
 // exports
 
