@@ -12133,6 +12133,109 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 
 
+class EdgeProps extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
+    constructor(props) {
+        super(props);
+
+        this.handleKeyPress = e => {
+            if (e.key === 'Enter') this.save();
+        };
+
+        this.save = e => {
+            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 0;
+
+            setTimeout(p => {
+                __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].dispatch({
+                    type: 'SAVE_EDGE',
+                    from: 'GRAPH',
+                    weight: this.state.weight,
+                    capacity: this.state.capacity
+                });
+            }, 500);
+        };
+
+        this.cancel = e => {
+            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 0;
+
+            setTimeout(p => {
+                __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].dispatch({
+                    type: 'SAVE_EDGE',
+                    from: 'GRAPH',
+                    weight: __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].getState().graph.present.edgeSelected.weight,
+                    capacity: __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].getState().graph.present.edgeSelected.capacity
+                });
+            }, 500);
+        };
+
+        this.state = {
+            weight: __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].getState().graph.present.edgeSelected.weight,
+            capacity: __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].getState().graph.present.edgeSelected.capacity
+        };
+    }
+
+    componentDidMount() {
+        setTimeout(e => {
+            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.findDOMNode(this).style.opacity = 1;
+        });
+    }
+
+    render() {
+        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "div",
+            { className: "modal" },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                "div",
+                { className: "modal-content" },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    "h4",
+                    null,
+                    "Editar aresta"
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    __WEBPACK_IMPORTED_MODULE_3_react_materialize__["Row"],
+                    null,
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_materialize__["Input"], { label: "Peso",
+                        autoFocus: true,
+                        value: this.state.weight,
+                        onKeyPress: this.handleKeyPress,
+                        onChange: e => {
+                            this.setState({ weight: e.target.value });
+                        }
+                    }),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_materialize__["Input"], { label: "Capacidade",
+                        value: this.state.capacity,
+                        onKeyPress: this.handleKeyPress,
+                        onChange: e => {
+                            this.setState({ capacity: e.target.value });
+                        }
+                    })
+                )
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                "div",
+                { className: "modal-footer" },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    "button",
+                    { className: "modal-action modal-close waves-effect waves-green btn-flat",
+                        onClick: e => {
+                            this.save();
+                        } },
+                    "Salvar"
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    "button",
+                    { className: "modal-action modal-close waves-effect waves-red btn-flat",
+                        style: { marginRight: "5px" },
+                        onClick: e => {
+                            this.cancel();
+                        } },
+                    "Cancelar"
+                )
+            )
+        );
+    }
+}
+
 class EdgeEdit extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
     render() {
         const directionalEdges = __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].getState().controls.directionalEdges;
@@ -12159,6 +12262,16 @@ class Edge extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "g",
             null,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                "text",
+                {
+                    display: "block",
+                    x: (this.props.from.x + this.props.to.x) / 2,
+                    y: (this.props.from.y + this.props.to.y) / 2 - 15,
+                    textAnchor: "middle",
+                    alignmentBaseline: "central" },
+                this.props.weight
+            ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("line", { x1: this.props.from.x,
                 y1: this.props.from.y,
                 x2: this.props.to.x,
@@ -12173,7 +12286,7 @@ class Edge extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
                     __WEBPACK_IMPORTED_MODULE_2__store_index_jsx__["a" /* store */].dispatch({
                         type: 'CLICK_EDGE',
                         from: 'GRAPH',
-                        id: this.props.id
+                        edge: this.props
                     });
                 },
 
@@ -12195,7 +12308,6 @@ class VertexProps extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Componen
         super(props);
 
         this.handleKeyPress = e => {
-            console.log(e);
             if (e.key === 'Enter') this.save();
         };
 
@@ -12364,13 +12476,14 @@ class Graph extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
         const vertexList = graphState.vertexList;
         const edgeList = graphState.edgeList;
         const vertexEditing = graphState.vertexSelected != null;
-
+        const edgeEditing = graphState.edgeSelected != null;
         let mouseX, mouseY;
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             "div",
             { className: "fullHeight" },
             vertexEditing ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(VertexProps, { key: 0 }) : null,
+            edgeEditing ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EdgeProps, { key: 0 }) : null,
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 "svg",
                 {
@@ -12581,27 +12694,33 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
 
     switch (action.type) {
         case 'SAVE_VERTEX':
-            console.log(action);
             return _extends({}, state, {
                 vertexList: state.vertexList.map(e => {
                     if (e.id == state.vertexSelected.id) e.label = action.label;
                     return e;
                 }),
                 vertexSelected: null });
+        case 'SAVE_EDGE':
+            return _extends({}, state, {
+                edgeList: state.edgeList.map(e => {
+                    if (e.id == state.edgeSelected.id) {
+                        e.weight = action.weight;
+                        e.capacity = action.capacity;
+                    }
+                    return e;
+                }),
+                edgeSelected: null });
         case 'CLICK_EDGE':
             {
                 if (controlsState == 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
                     return _extends({}, state, {
-                        edgeSelected: state.edgeList.find(e => {
-                            e.id == action.id;
-                        })
+                        edgeSelected: action.edge
                     });
                 }
             }
         case 'CLICK_VERTEX':
             {
                 if (controlsState == 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
-                    console.log(action.vertex);
                     return _extends({}, state, {
                         vertexSelected: action.vertex
                     });
@@ -12658,7 +12777,8 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
                     }),
                     to: state.vertexList.find(e => {
                         return e.id == action.id;
-                    })
+                    }),
+                    weight: 1
                 }],
                 nextEdgeId: state.nextEdgeId + 1
             });
@@ -14611,7 +14731,7 @@ exports = module.exports = __webpack_require__(114)(undefined);
 
 
 // module
-exports.push([module.i, "html, body, #app {\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg text {\r\n    pointer-events: none;\r\n}\r\n\r\n.fullHeight {\r\n    height: 100%;\r\n    padding: 10px 0;\r\n}\r\n\r\n#controls button {\r\n    width: 100%;\r\n}\r\n\r\nbutton.btn.active {\r\n    background: #0d6d64;\r\n}\r\n\r\n[type=\"checkbox\"]+label {\r\n    font-size: 14px;\r\n}\r\n\r\ninput[type=\"text\"] {\r\n    font-size: 14px;\r\n}\r\n\r\n[type=\"text\"]+label {\r\n    font-size: 14px !important;\r\n}\r\n\r\n.modal {\r\n    z-index: 1;\r\n    display: block;\r\n    opacity: 0;\r\n    transition: all 0.5s;\r\n}\r\n\r\n.col {\r\n    width: 100%;\r\n}", ""]);
+exports.push([module.i, "html, body, #app {\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg text {\r\n    pointer-events: none;\r\n}\r\n\r\n.fullHeight {\r\n    height: 100%;\r\n    padding: 10px 0;\r\n}\r\n\r\n#controls button {\r\n    width: 100%;\r\n}\r\n\r\nbutton.btn.active {\r\n    background: #0d6d64;\r\n}\r\n\r\n[type=\"checkbox\"]+label {\r\n    font-size: 14px;\r\n}\r\n\r\ninput[type=\"text\"] {\r\n    font-size: 14px;\r\n}\r\n\r\n[type=\"text\"]+label {\r\n    font-size: 14px !important;\r\n}\r\n\r\n.modal {\r\n    z-index: 1;\r\n    display: block;\r\n    opacity: 0;\r\n    transition: all 0.5s;\r\n}\r\n\r\n.col {\r\n    width: 100%;\r\n    background-image: \r\n}", ""]);
 
 // exports
 

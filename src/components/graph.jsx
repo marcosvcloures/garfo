@@ -3,6 +3,94 @@ import ReactDOM from "react-dom";
 import { store } from "../store/index.jsx";
 import { Row, Input } from 'react-materialize';
 
+class EdgeProps extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { 
+            weight: store.getState().graph.present.edgeSelected.weight,
+            capacity: store.getState().graph.present.edgeSelected.capacity 
+        };
+    }
+
+    componentDidMount() {
+        setTimeout((e) => { ReactDOM.findDOMNode(this).style.opacity = 1 });
+    }
+
+    handleKeyPress = (e) => {
+        if (e.key === 'Enter') 
+            this.save();
+    }
+
+    save = (e) => {
+        ReactDOM.findDOMNode(this).style.opacity = 0;
+
+        setTimeout((p) => {
+            store.dispatch({
+                type: 'SAVE_EDGE',
+                from: 'GRAPH',
+                weight: this.state.weight,
+                capacity: this.state.capacity
+            })
+        }, 500);
+    }
+
+    cancel = (e) => {
+        ReactDOM.findDOMNode(this).style.opacity = 0;
+
+        setTimeout((p) => {
+            store.dispatch({
+                type: 'SAVE_EDGE',
+                from: 'GRAPH',
+                weight: store.getState().graph.present.edgeSelected.weight,
+                capacity: store.getState().graph.present.edgeSelected.capacity 
+            })
+        }, 500)
+    }
+
+    render() {
+        return <div className="modal">
+            <div className="modal-content">
+                <h4>Editar aresta</h4>
+                <Row>
+                    <Input label="Peso"
+                        autoFocus
+                        value={this.state.weight}
+                        onKeyPress={this.handleKeyPress}
+                        onChange={
+                            (e) => { 
+                                this.setState({ weight: e.target.value }) }
+                        }
+                    />
+                    <Input label="Capacidade"
+                        value={this.state.capacity}
+                        onKeyPress={this.handleKeyPress}
+                        onChange={
+                            (e) => { 
+                                this.setState({ capacity: e.target.value }) 
+                            }
+                        }
+                    />
+                </Row>
+            </div>
+            <div className="modal-footer">
+                <button className="modal-action modal-close waves-effect waves-green btn-flat"
+                    onClick={(e) => {
+                        this.save();
+                    }}>
+                    Salvar
+                    </button>
+                <button className="modal-action modal-close waves-effect waves-red btn-flat"
+                    style={{ marginRight: "5px" }}
+                    onClick={(e) => {
+                        this.cancel();
+                    }}>
+                    Cancelar
+                </button>
+            </div>
+        </div>;
+    }
+}
+
 class EdgeEdit extends React.Component {
     render() {
         const directionalEdges = store.getState().controls.directionalEdges;
@@ -28,6 +116,15 @@ class Edge extends React.Component {
 
         return (
             <g>
+                <text
+                    display="block"
+                    x={(this.props.from.x + this.props.to.x) / 2}
+                    y={(this.props.from.y + this.props.to.y) / 2 - 15}
+                    textAnchor="middle"
+                    alignmentBaseline="central">
+                    {this.props.weight}
+                </text>
+
                 <line x1={this.props.from.x}
                     y1={this.props.from.y}
                     x2={this.props.to.x}
@@ -42,7 +139,7 @@ class Edge extends React.Component {
                         store.dispatch({
                             type: 'CLICK_EDGE',
                             from: 'GRAPH',
-                            id: this.props.id
+                            edge: this.props
                         })
                     }}
 
@@ -71,7 +168,6 @@ class VertexProps extends React.Component {
     }
 
     handleKeyPress = (e) => {
-        console.log(e);
         if (e.key === 'Enter') 
             this.save();
     }
@@ -218,12 +314,13 @@ class Graph extends React.Component {
         const vertexList = graphState.vertexList;
         const edgeList = graphState.edgeList;
         const vertexEditing = graphState.vertexSelected != null;
-
+        const edgeEditing = graphState.edgeSelected != null;
         let mouseX, mouseY;
 
         return (
             <div className="fullHeight">
                 {vertexEditing ? <VertexProps key={0} /> : null}
+                {edgeEditing ? <EdgeProps key={0} /> : null}
 
                 <svg
                     onClick={(e) => {
@@ -285,7 +382,7 @@ class Graph extends React.Component {
 
                     {edgeList.map(e => { return <Edge key={e.id} {...e} /> })})}
 
-                {vertexList.map(e => { return <Vertex key={e.id} {...e} /> })}
+                    {vertexList.map(e => { return <Vertex key={e.id} {...e} /> })}
                 </svg>
             </div>
         );

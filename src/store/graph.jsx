@@ -8,7 +8,6 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
 
     switch (action.type) {
         case 'SAVE_VERTEX':
-        console.log(action);
             return {...state, 
                 vertexList: state.vertexList.map((e) => {
                     if(e.id == state.vertexSelected.id) 
@@ -16,17 +15,26 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
                     return e;
                 }),
                 vertexSelected: null}
+        case 'SAVE_EDGE':
+            return {...state, 
+                edgeList: state.edgeList.map((e) => {
+                    if(e.id == state.edgeSelected.id) {
+                        e.weight = action.weight;
+                        e.capacity = action.capacity;
+                    }
+                    return e;
+                }),
+                edgeSelected: null}
         case 'CLICK_EDGE': {
             if (controlsState == 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
                 return {
                     ...state,
-                    edgeSelected: state.edgeList.find(e => { e.id == action.id })
+                    edgeSelected: action.edge
                 }
             }
         }
         case 'CLICK_VERTEX': {
             if (controlsState == 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
-                console.log(action.vertex);
                 return {
                     ...state,
                     vertexSelected: action.vertex
@@ -87,7 +95,8 @@ const graph = (state = { vertexList: [], edgeList: [], mouseDownVertex: false, n
                     edgeList: [...state.edgeList, {
                         id: state.nextEdgeId,
                         from: state.vertexList.find(e => { return e.id == state.mouseDownId; }),
-                        to: state.vertexList.find(e => { return e.id == action.id; })
+                        to: state.vertexList.find(e => { return e.id == action.id; }),
+                        weight: 1
                     }],
                     nextEdgeId: state.nextEdgeId + 1
                 };
