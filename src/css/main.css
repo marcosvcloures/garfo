@@ -47,5 +47,12 @@ input[type="text"] {
 
 .col {
     width: 100%;
-    background-image: 
+}
+
+.edge {
+    transition: all 0.5s;
+}
+
+.edge:hover {
+    stroke-width: 5px;
 }

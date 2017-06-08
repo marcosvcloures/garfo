@@ -114,12 +114,23 @@ class Edge extends React.Component {
     render() {
         const directionalEdges = store.getState().controls.directionalEdges;
 
+        const mx = (this.props.from.x + this.props.to.x) / 2;
+        const my = (this.props.from.y + this.props.to.y) / 2;
+
+        const vx = mx - this.props.from.x;
+        const vy = my - this.props.from.y;
+
+        const multi = -15 / Math.sqrt(vx * vx + vy * vy);
+
+        const x = mx - vy * multi;
+        const y = my + vx * multi;
+
         return (
             <g>
                 <text
                     display="block"
-                    x={(this.props.from.x + this.props.to.x) / 2}
-                    y={(this.props.from.y + this.props.to.y) / 2 - 15}
+                    x={x}
+                    y={y}
                     textAnchor="middle"
                     alignmentBaseline="central">
                     {this.props.weight}
@@ -129,6 +140,7 @@ class Edge extends React.Component {
                     y1={this.props.from.y}
                     x2={this.props.to.x}
                     y2={this.props.to.y}
+                    className="edge"
                     strokeWidth="3"
                     strokeDasharray={store.getState().graph.edgeSelected != null ? "5, 5" : "0"}
                     stroke="black"
@@ -230,7 +242,7 @@ class VertexProps extends React.Component {
     }
 }
 
-class Vertex extends React.Component {
+class Vertex extends React.PureComponent {
     render() {
         const displayLabel = store.getState().controls.displayLabel;
 
@@ -352,12 +364,12 @@ class Graph extends React.Component {
 
                     <defs>
                         <marker id="arrow"
-                            markerWidth="10"
-                            markerHeight="10"
-                            refX="18"
+                            markerWidth="30"
+                            markerHeight="30"
+                            refX="15"
                             refY="3"
                             orient="auto"
-                            markerUnits="strokeWidth"
+                            markerUnits="userSpaceOnUse"
                             viewBox="0 0 15 15">
                             <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
                         </marker>

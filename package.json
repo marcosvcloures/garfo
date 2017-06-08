@@ -8,7 +8,7 @@
     "dev": "webpack-dev-server --progress --colors",
     "build": "webpack --progress --colors"
   },
-  "author": "",
+  "author": "Marcos Valério de Carvalho Loures",
   "license": "MIT",
   "private": true,
   "devDependencies": {
@@ -16,17 +16,15 @@
     "babel-loader": "^7.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-es2015-ie": "^6.7.0",
+    "babel-polyfill": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "css-loader": "^0.28.0",
-    "less": "^2.7.2",
-    "less-loader": "^4.0.3",
     "style-loader": "^0.16.1",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.4"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "redux": "^3.6.0",

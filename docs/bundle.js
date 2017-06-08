@@ -15597,6 +15597,17 @@ var Edge = function (_React$Component3) {
 
             var directionalEdges = _index.store.getState().controls.directionalEdges;
 
+            var mx = (this.props.from.x + this.props.to.x) / 2;
+            var my = (this.props.from.y + this.props.to.y) / 2;
+
+            var vx = mx - this.props.from.x;
+            var vy = my - this.props.from.y;
+
+            var multi = -15 / Math.sqrt(vx * vx + vy * vy);
+
+            var x = mx - vy * multi;
+            var y = my + vx * multi;
+
             return _react2.default.createElement(
                 "g",
                 null,
@@ -15604,8 +15615,8 @@ var Edge = function (_React$Component3) {
                     "text",
                     {
                         display: "block",
-                        x: (this.props.from.x + this.props.to.x) / 2,
-                        y: (this.props.from.y + this.props.to.y) / 2 - 15,
+                        x: x,
+                        y: y,
                         textAnchor: "middle",
                         alignmentBaseline: "central" },
                     this.props.weight
@@ -15614,6 +15625,7 @@ var Edge = function (_React$Component3) {
                     y1: this.props.from.y,
                     x2: this.props.to.x,
                     y2: this.props.to.y,
+                    className: "edge",
                     strokeWidth: "3",
                     strokeDasharray: _index.store.getState().graph.edgeSelected != null ? "5, 5" : "0",
                     stroke: "black",
@@ -15750,8 +15762,8 @@ var VertexProps = function (_React$Component4) {
     return VertexProps;
 }(_react2.default.Component);
 
-var Vertex = function (_React$Component5) {
-    _inherits(Vertex, _React$Component5);
+var Vertex = function (_React$PureComponent) {
+    _inherits(Vertex, _React$PureComponent);
 
     function Vertex() {
         _classCallCheck(this, Vertex);
@@ -15831,10 +15843,10 @@ var Vertex = function (_React$Component5) {
     }]);
 
     return Vertex;
-}(_react2.default.Component);
+}(_react2.default.PureComponent);
 
-var Graph = function (_React$Component6) {
-    _inherits(Graph, _React$Component6);
+var Graph = function (_React$Component5) {
+    _inherits(Graph, _React$Component5);
 
     function Graph() {
         _classCallCheck(this, Graph);
@@ -15909,12 +15921,12 @@ var Graph = function (_React$Component6) {
                         _react2.default.createElement(
                             "marker",
                             { id: "arrow",
-                                markerWidth: "10",
-                                markerHeight: "10",
-                                refX: "18",
+                                markerWidth: "30",
+                                markerHeight: "30",
+                                refX: "15",
                                 refY: "3",
                                 orient: "auto",
-                                markerUnits: "strokeWidth",
+                                markerUnits: "userSpaceOnUse",
                                 viewBox: "0 0 15 15" },
                             _react2.default.createElement("path", { d: "M0,0 L2,3 L0,6 L9,3 z", fill: "#000" })
                         ),
@@ -22309,7 +22321,7 @@ exports = module.exports = __webpack_require__(409)(undefined);
 
 
 // module
-exports.push([module.i, "html, body, #app {\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg text {\r\n    pointer-events: none;\r\n}\r\n\r\n.fullHeight {\r\n    height: 100%;\r\n    padding: 10px 0;\r\n}\r\n\r\n#controls button {\r\n    width: 100%;\r\n}\r\n\r\nbutton.btn.active {\r\n    background: #0d6d64;\r\n}\r\n\r\n[type=\"checkbox\"]+label {\r\n    font-size: 14px;\r\n}\r\n\r\ninput[type=\"text\"] {\r\n    font-size: 14px;\r\n}\r\n\r\n[type=\"text\"]+label {\r\n    font-size: 14px !important;\r\n}\r\n\r\n.modal {\r\n    z-index: 1;\r\n    display: block;\r\n    opacity: 0;\r\n    transition: all 0.5s;\r\n}\r\n\r\n.col {\r\n    width: 100%;\r\n    background-image: \r\n}", ""]);
+exports.push([module.i, "html, body, #app {\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\nsvg text {\r\n    pointer-events: none;\r\n}\r\n\r\n.fullHeight {\r\n    height: 100%;\r\n    padding: 10px 0;\r\n}\r\n\r\n#controls button {\r\n    width: 100%;\r\n}\r\n\r\nbutton.btn.active {\r\n    background: #0d6d64;\r\n}\r\n\r\n[type=\"checkbox\"]+label {\r\n    font-size: 14px;\r\n}\r\n\r\ninput[type=\"text\"] {\r\n    font-size: 14px;\r\n}\r\n\r\n[type=\"text\"]+label {\r\n    font-size: 14px !important;\r\n}\r\n\r\n.modal {\r\n    z-index: 1;\r\n    display: block;\r\n    opacity: 0;\r\n    transition: all 0.5s;\r\n}\r\n\r\n.col {\r\n    width: 100%;\r\n}\r\n\r\n.edge {\r\n    transition: all 0.5s;\r\n}\r\n\r\n.edge:hover {\r\n    stroke-width: 5px;\r\n}", ""]);
 
 // exports
 
