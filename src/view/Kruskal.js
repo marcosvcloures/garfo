@@ -15,8 +15,6 @@ function init(_n) {
         Rank.push(0);
         p.push(i);
     }
-
-    console.log(Rank, p);
 }
 
 function find(x) {
