@@ -11,35 +11,43 @@ class Modal extends React.Component {
     }
 
     render() {
-        return this.state.shown === false ? null : 
-        <div className="modal">
-            <div className="modal-content">
-                <h4>Escolha o vértice inicial</h4>
-                <div className="row">
+        return this.state.shown === false ? null :
+            <div className="modal">
+                <div className="modal-content">
+                    <h4>Escolha o vértice inicial</h4>
+                    <div className="row">
                         <h6>O algoritmo de Dijkstra precisa de um vértice inicial!<br />
                             Para escolher o vértice inicial, basta clicar em cima do vértice desejado.</h6>
+                    </div>
                 </div>
-            </div>
-            <div className="modal-footer center-align">
-                <button className="waves-effect waves-blue btn-flat"
-                    onClick={(e) => {
-                        ReactDOM.findDOMNode(this).style.opacity = 0;
+                <div className="modal-footer center-align">
+                    <button className="waves-effect waves-blue btn-flat"
+                        onClick={(e) => {
+                            ReactDOM.findDOMNode(this).style.opacity = 0;
 
-                        setTimeout(() => this.setState({shown: false}), 500);
-                    }}>
-                    Entendi!
+                            setTimeout(() => this.setState({ shown: false }), 500);
+                        }}>
+                        Entendi!
                     </button>
-            </div>
-        </div>;
+                </div>
+            </div>;
     }
 }
 
+const Init = () => {
+
+}
+
 class Dijkstra extends React.Component {
+    omponentWillMount() {
+        Init();
+    }
+
     render() {
-        return <div className="full-height">
+        return <span>
             <Modal />
             <Algorithm />
-        </div>
+        </span>;
     }
 }
 

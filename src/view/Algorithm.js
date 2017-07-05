@@ -94,7 +94,7 @@ const Controls = () => {
             Passo a frente <i className="material-icons left">redo</i>
         </a>
         <a className="waves-effect btn" onClick={() => store.dispatch(ActionCreators.undo())}>
-            Passo a trás <i className="material-icons left">undo</i>
+            Passo atrás <i className="material-icons left">undo</i>
         </a>
         <p className="range-field">
             <input type="range" id="speed" min="1" max="5" value={store.getState().Algorithm.present.speed} onChange={(e) =>

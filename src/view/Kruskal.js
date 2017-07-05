@@ -95,9 +95,7 @@ class Kruskal extends React.Component {
     }
 
     render() {
-        return <div className="full-height">
-            <Algorithm />
-        </div>
+        return <Algorithm />
     }
 }
 
