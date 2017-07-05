@@ -183,6 +183,8 @@ class Algorithm extends Component {
     componentWillUnmount() {
         document.removeEventListener("keydown", keyHandler);
 
+        clearInterval(MAIN_LOOP);
+
         this.unsubscribe();
     }
 

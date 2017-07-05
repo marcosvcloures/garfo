@@ -42,7 +42,7 @@ function union(a, b) {
 
 
 const Init = () => {
-    edgeList = store.getState().Graph.present.edgeList.sort((a, b) => a.weight > b.weight);
+    edgeList = store.getState().Graph.present.edgeList.sort((a, b) => a.weight > b.weight ? 1 : -1);
     vertexList = store.getState().Graph.present.vertexList;
 
     init(vertexList.length);
