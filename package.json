@@ -4,7 +4,7 @@
   "description": "Visualizador de algoritmos e heurísticas em grafos",
   "author": "Marcos Valério de Carvalho Loures",
   "license": "MIT",
-  "homepage" : "http://marcosvcloures.github.io/garfo",
+  "homepage": "http://marcosvcloures.github.io/garfo",
   "private": true,
   "dependencies": {
     "materialize-css": "^0.98.2",

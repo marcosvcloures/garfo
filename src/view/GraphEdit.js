@@ -6,6 +6,8 @@ import store from "../store/index.js";
 const Vertex = (id, posX, posY, text) => {
     return (
         <g
+            key={id}
+
             onClick={(e) => {
                 e.preventDefault();
 
@@ -86,7 +88,29 @@ const Edge = (id, from, to, weight) => {
         y = my + vx * multi;
     }
 
-    return <g>
+    return <g
+        key={id}
+        
+        onClick={e => {
+            e.preventDefault();
+
+            store.dispatch({
+                type: 'CLICK_EDGE',
+                from: 'GRAPH',
+                id: id
+            })
+        }}
+
+        onDoubleClick={e => {
+            e.preventDefault();
+
+            store.dispatch({
+                type: 'DOUBLE_CLICK_EDGE',
+                from: 'GRAPH',
+                id: id
+            })
+        }}>
+
         {WeightedEdges ? <text
             display="block"
             x={x}
@@ -105,26 +129,6 @@ const Edge = (id, from, to, weight) => {
             strokeDasharray="0"
             stroke="black"
             markerEnd={DirectionalEdges ? "url(#arrow)" : null}
-
-            onClick={e => {
-                e.preventDefault();
-
-                store.dispatch({
-                    type: 'CLICK_EDGE',
-                    from: 'GRAPH',
-                    id: id
-                })
-            }}
-
-            onDoubleClick={e => {
-                e.preventDefault();
-
-                store.dispatch({
-                    type: 'DOUBLE_CLICK_EDGE',
-                    from: 'GRAPH',
-                    id: id
-                })
-            }}
         />
     </g>;
 }
@@ -349,7 +353,7 @@ class EdgeProps extends React.Component {
             store.dispatch({
                 type: 'SAVE_EDGE',
                 from: 'GRAPH',
-                weight: this.state.weight,
+                weight: !isNaN(parseInt(this.state.weight, 10)) ? parseInt(this.state.weight, 10) : 0,
                 capacity: this.state.capacity
             })
         }, 500);
@@ -378,7 +382,9 @@ class EdgeProps extends React.Component {
                             autoFocus
                             value={this.state.weight}
                             onKeyPress={this.handleKeyPress}
-                            onChange={(e) => this.setState({ weight: e.target.value })} />
+                            onChange={(e) =>
+                                this.setState({ weight: !isNaN(parseInt(e.target.value, 10)) ? parseInt(e.target.value, 10) : null })
+                            } />
                         <label htmlFor="edgeWeight">Peso</label>
                     </div>
                     <div className="input-field col s12">
@@ -442,11 +448,18 @@ const keyHandler = (e) => {
 
 class GraphEdit extends Component {
     componentDidMount() {
-        document.addEventListener("keydown", keyHandler);
-
         this.unsubscribe = store.subscribe(() =>
             this.forceUpdate()
         );
+
+        document.addEventListener("keydown", keyHandler);
+
+        const node = ReactDOM.findDOMNode(this);
+
+        node.style.opacity = 0;
+        node.style.transition = 'all 0.6s';
+
+        setTimeout(() => node.style.opacity = 1);
     }
 
     componentWillUnmount() {

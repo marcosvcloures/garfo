@@ -20,7 +20,7 @@ nav {
     display: block;
     margin: 10px 0;
     background-color: #26a69a;
-    text-transform: capitalize;
+    text-transform: none;
 }
 
 .btn.active {
@@ -47,4 +47,26 @@ svg text {
 
 .breadcrumb {
     font-size: 26px;
+}
+
+.small {
+    height: 200px !important;
+}
+
+.nav-wrapper a, .card {
+    cursor: pointer;
+}
+
+.thumb.active {
+    box-shadow: #555 1px 1px 5px;
+    z-index: 1;
+}
+
+line {
+    transition: all 0.4s;
+    cursor: pointer;
+}
+
+line:hover {
+    stroke-width: 6;
 }
