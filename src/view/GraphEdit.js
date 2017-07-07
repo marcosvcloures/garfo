@@ -7,7 +7,7 @@ const Vertex = (id, posX, posY, text) => {
     return (
         <g
             key={id}
-
+            
             onClick={(e) => {
                 e.preventDefault();
 
@@ -28,6 +28,14 @@ const Vertex = (id, posX, posY, text) => {
                 });
             }}
 
+            onTouchStart = {(e) => {
+                store.dispatch({
+                    type: 'MOUSE_DOWN_VERTEX',
+                    from: 'GRAPH',
+                    id: id
+                });
+            }}
+
             onMouseDown={(e) => {
                 e.preventDefault();
 
@@ -36,6 +44,22 @@ const Vertex = (id, posX, posY, text) => {
                     from: 'GRAPH',
                     id: id
                 });
+            }}
+
+            onTouchEnd = {(e) => {
+                let clickEvent;
+                
+                clickEvent = document.createEvent ('MouseEvents');
+                clickEvent.initEvent ('mouseup', true, true);
+
+                document.elementsFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY)[0]
+                    .dispatchEvent(clickEvent);
+
+                clickEvent = document.createEvent ('MouseEvents');
+                clickEvent.initEvent ('click', true, true);
+
+                document.elementsFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY)[0]
+                    .dispatchEvent(clickEvent);
             }}
 
             onMouseUp={(e) => {
@@ -88,37 +112,16 @@ const Edge = (id, from, to, weight) => {
         y = my + vx * multi;
     }
 
-    return <g
-        key={id}
-        
-        onClick={e => {
-            e.preventDefault();
+    return <g key={id}>
 
-            store.dispatch({
-                type: 'CLICK_EDGE',
-                from: 'GRAPH',
-                id: id
-            })
-        }}
-
-        onDoubleClick={e => {
-            e.preventDefault();
-
-            store.dispatch({
-                type: 'DOUBLE_CLICK_EDGE',
-                from: 'GRAPH',
-                id: id
-            })
-        }}>
-
-        {WeightedEdges ? <text
+        {WeightedEdges && <text
             display="block"
             x={x}
             y={y}
             textAnchor="middle"
             alignmentBaseline="central">
             {weight}
-        </text> : null}
+        </text>}
 
         <line x1={from.x}
             y1={from.y}
@@ -128,7 +131,39 @@ const Edge = (id, from, to, weight) => {
             strokeWidth="3"
             strokeDasharray="0"
             stroke="black"
-            markerEnd={DirectionalEdges ? "url(#arrow)" : null}
+            markerEnd={DirectionalEdges && "url(#arrow)"}
+        />
+
+        <line 
+            onClick={e => {
+                e.preventDefault();
+
+                store.dispatch({
+                    type: 'CLICK_EDGE',
+                    from: 'GRAPH',
+                    id: id
+                })
+            }}
+
+            onDoubleClick={e => {
+                e.preventDefault();
+
+                store.dispatch({
+                    type: 'DOUBLE_CLICK_EDGE',
+                    from: 'GRAPH',
+                    id: id
+                })
+            }}
+
+            x1={from.x}
+            y1={from.y}
+            x2={to.x}
+            y2={to.y}
+            className="edge"
+            strokeWidth="20"
+            strokeDasharray="0"
+            stroke="rgba(0, 0, 0, 0)"
+            markerEnd={DirectionalEdges && "url(#arrow)"}
         />
     </g>;
 }
@@ -145,7 +180,7 @@ const EdgeEdit = (from, to) => {
                 strokeWidth="3"
                 strokeDasharray="5, 5"
                 stroke="black"
-                markerEnd={directionalEdges ? "url(#arrowEdit)" : null} />
+                markerEnd={directionalEdges && "url(#arrowEdit)"} />
         </g>
     );
 }
@@ -165,6 +200,22 @@ const Graph = () => {
                 x: e.nativeEvent.offsetX,
                 y: e.nativeEvent.offsetY
             })
+        }}
+
+        onTouchMove={(e) => {
+            if (store.getState().ControlsEdit.action === 'ADD' || store.getState().ControlsEdit.action === 'MOVE') {
+                const offset = e.target.parentElement.parentElement.getBoundingClientRect();
+
+                this.mouseX = e.nativeEvent.touches[0].clientX - offset.left;
+                this.mouseY = e.nativeEvent.touches[0].clientY - offset.top;
+
+                store.dispatch({
+                    type: 'MOUSE_MOVE',
+                    from: 'GRAPH',
+                    x: this.mouseX,
+                    y: this.mouseY
+                });
+            }
         }}
 
         onMouseMove={(e) => {
@@ -206,11 +257,9 @@ const Graph = () => {
             </marker>
         </defs>
 
-        {graphState.mouseDownVertex === true && store.getState().ControlsEdit.action === 'ADD' ?
+        {graphState.mouseDownVertex === true && store.getState().ControlsEdit.action === 'ADD' &&
             EdgeEdit(VertexList.find(e => { return e.id === graphState.mouseDownId }),
-                { x: this.mouseX, y: this.mouseY })
-            :
-            null}
+                { x: this.mouseX, y: this.mouseY })}
 
         {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight))}
         {VertexList.map(e => Vertex(e.id, e.x, e.y, e.label))}
@@ -483,8 +532,8 @@ class GraphEdit extends Component {
                 {Graph()}
             </div>
 
-            {vertexEditing ? <VertexProps key={0} /> : null}
-            {edgeEditing ? <EdgeProps key={1} /> : null}
+            {vertexEditing && <VertexProps key={0} />}
+            {edgeEditing && <EdgeProps key={1} />}
         </div>;
     }
 }

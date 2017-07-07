@@ -10,8 +10,8 @@ const reducers = combineReducers({
     ControlsEdit,
     Algorithm: undoable(Algorithm, {
         filter: function filterState(action, currentState, previousState) {
-            if (previousState === undefined)
-                return false; 
+            if (action !== 'ALGORITHM_STEP')
+                return false;
 
             if (currentState.vertexList.length !== previousState.vertexList.length ||
                 currentState.edgeList.length !== previousState.edgeList.length) 

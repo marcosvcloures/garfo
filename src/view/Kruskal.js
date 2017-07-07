@@ -49,7 +49,8 @@ const Init = () => {
         type: 'ALGORITHM_INIT',
         vertexList: vertexList,
         edgeList: [], 
-        step_func: Step
+        step_func: Step,
+        init_func: Init
     });
 }
 
@@ -61,8 +62,6 @@ const Step = () => {
                 vertexList: vertexList,
                 edgeList: [...store.getState().Algorithm.present.edgeList, edgeList[arestaAtual]]
             });
-
-            console.log(edgeList[arestaAtual]);
         }
         else {
             store.dispatch({
@@ -75,13 +74,13 @@ const Step = () => {
         arestaAtual++;
     }
     else {
-        Finneshed();
+        Finished();
     }
 }
 
-const Finneshed = () => {
+const Finished = () => {
     store.dispatch({
-        type: 'ALGORITHM_FINNISH',
+        type: 'ALGORITHM_FINISH',
         vertexList: vertexList,
         edgeList: store.getState().Algorithm.present.edgeList
     });
