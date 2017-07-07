@@ -93,27 +93,25 @@ const Vertex = (id, posX, posY, text) => {
     );
 }
 
-const Edge = (id, from, to, weight) => {
+const Edge = (id, from, to, weight, oposite) => {
     const DirectionalEdges = store.getState().Graph.present.directionalEdges;
     const WeightedEdges = store.getState().Graph.present.weightedEdges;
-
     let x, y;
 
-    if (WeightedEdges) {
+    if (WeightedEdges || oposite) {
         const mx = (from.x + to.x) / 2;
         const my = (from.y + to.y) / 2;
 
         const vx = mx - from.x;
         const vy = my - from.y;
 
-        const multi = -15 / Math.sqrt(vx * vx + vy * vy);
+        const multi = oposite ? -30 / Math.sqrt(vx * vx + vy * vy) : -15 / Math.sqrt(vx * vx + vy * vy);
 
         x = mx - vy * multi;
         y = my + vx * multi;
     }
 
     return <g key={id}>
-
         {WeightedEdges && <text
             display="block"
             x={x}
@@ -123,18 +121,30 @@ const Edge = (id, from, to, weight) => {
             {weight}
         </text>}
 
-        <line x1={from.x}
-            y1={from.y}
-            x2={to.x}
-            y2={to.y}
-            className="edge"
-            strokeWidth="3"
-            strokeDasharray="0"
-            stroke="black"
-            markerEnd={DirectionalEdges && "url(#arrow)"}
-        />
+        { oposite ? 
+            <path
+                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y} 
+                stroke="black" 
+                fill="transparent"
+                className="edge"
+                strokeWidth="3"
+                strokeDasharray="0"
+                markerEnd={DirectionalEdges && "url(#arrow)"}
+            />
+        :
+            <line x1={from.x}
+                y1={from.y}
+                x2={to.x}
+                y2={to.y}
+                className="edge"
+                strokeWidth="3"
+                strokeDasharray="0"
+                stroke="black"
+                markerEnd={DirectionalEdges && "url(#arrow)"}
+            />
+        }
 
-        <line 
+        <g 
             onClick={e => {
                 e.preventDefault();
 
@@ -153,18 +163,27 @@ const Edge = (id, from, to, weight) => {
                     from: 'GRAPH',
                     id: id
                 })
-            }}
-
-            x1={from.x}
-            y1={from.y}
-            x2={to.x}
-            y2={to.y}
-            className="edge"
-            strokeWidth="20"
-            strokeDasharray="0"
-            stroke="rgba(0, 0, 0, 0)"
-            markerEnd={DirectionalEdges && "url(#arrow)"}
-        />
+            }}>
+        { store.getState().ControlsEdit.action === 'SELECT' && (oposite ? 
+            <path
+                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y} 
+                stroke="transparent" 
+                fill="transparent"
+                className="edge edgeClickHelper"
+                strokeWidth="20"
+            />
+        :
+            <line 
+                x1={from.x}
+                y1={from.y}
+                x2={to.x}
+                y2={to.y}
+                className="edge edgeClickHelper"
+                strokeWidth="20"
+                strokeDasharray="0"
+                stroke="transparent"
+            />)} 
+        </g>
     </g>;
 }
 
@@ -217,7 +236,7 @@ const Graph = () => {
                 });
             }
         }}
-
+        
         onMouseMove={(e) => {
             e.preventDefault();
 
@@ -243,7 +262,7 @@ const Graph = () => {
                 orient="auto"
                 markerUnits="userSpaceOnUse"
                 viewBox="0 0 15 15">
-                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
+                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="context-stroke" />
             </marker>
             <marker id="arrowEdit"
                 markerWidth="10"
@@ -253,7 +272,7 @@ const Graph = () => {
                 orient="auto"
                 markerUnits="strokeWidth"
                 viewBox="0 0 15 15">
-                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
+                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="context-stroke" />
             </marker>
         </defs>
 
@@ -261,7 +280,7 @@ const Graph = () => {
             EdgeEdit(VertexList.find(e => { return e.id === graphState.mouseDownId }),
                 { x: this.mouseX, y: this.mouseY })}
 
-        {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight))}
+        {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight, e.opositeEdge))}
         {VertexList.map(e => Vertex(e.id, e.x, e.y, e.label))}
     </svg>;
 }
@@ -497,7 +516,7 @@ const keyHandler = (e) => {
 
 class GraphEdit extends Component {
     componentDidMount() {
-        this.unsubscribe = store.subscribe(() =>
+        this.unsubscribe = store.subscribe(() => 
             this.forceUpdate()
         );
 

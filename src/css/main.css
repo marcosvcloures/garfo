@@ -62,11 +62,6 @@ svg text {
     z-index: 1;
 }
 
-line {
-    transition: all 0.4s;
+.edgeClickHelper {
     cursor: pointer;
-}
-
-line:hover {
-    stroke-width: 6;
 }

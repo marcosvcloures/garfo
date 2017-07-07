@@ -101,10 +101,15 @@ const Graph = (state = {
             if (state.mouseDownVertex && controlsState === 'ADD')
                 return {
                     ...state,
-                    edgeList: [...state.edgeList, {
+                    edgeList: [...state.edgeList.map((e) => {
+                            if(e.from.id === action.id && e.to.id === state.mouseDownId)
+                                e.opositeEdge = true;
+                            return e;
+                        }), {
                         id: state.nextEdgeId,
                         from: state.vertexList.find(e => { return e.id === state.mouseDownId; }),
                         to: state.vertexList.find(e => { return e.id === action.id; }),
+                        opositeEdge: state.edgeList.findIndex(e => { return e.from.id === action.id && e.to.id === state.mouseDownId}) !== -1,
                         weight: 1
                     }],
                     nextEdgeId: state.nextEdgeId + 1

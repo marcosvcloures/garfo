@@ -48,7 +48,10 @@ const Init = () => {
     store.dispatch({
         type: 'ALGORITHM_INIT',
         vertexList: vertexList,
-        edgeList: [], 
+        edgeList: edgeList.map(e => { 
+            e.color = "#ccc"; 
+            e.strokeDash = "5, 5"; 
+            return e; }), 
         step_func: Step,
         init_func: Init
     });
@@ -56,22 +59,33 @@ const Init = () => {
 
 const Step = () => {
     if (arestaAtual !== edgeList.length) {
-        if (union(edgeList[arestaAtual].from.id, edgeList[arestaAtual].to.id) === true) {
-            store.dispatch({
-                type: 'ALGORITHM_STEP',
-                vertexList: vertexList,
-                edgeList: [...store.getState().Algorithm.present.edgeList, edgeList[arestaAtual]]
-            });
-        }
-        else {
-            store.dispatch({
-                type: 'ALGORITHM_STEP',
-                vertexList: vertexList,
-                edgeList: [...store.getState().Algorithm.present.edgeList, {...edgeList[arestaAtual], color: "red", strokeDash: "5, 5"}]
-            });
+        let e = store.getState().Algorithm.present.edgeList.slice();
+
+        switch(store.getState().Algorithm.present.step % 2) {
+            case 0:
+                e[arestaAtual].color = "orange";
+                
+                break;
+            case 1:
+                if (union(edgeList[arestaAtual].from.id, edgeList[arestaAtual].to.id) === true) {
+                    e[arestaAtual].color = "black"; 
+                    e[arestaAtual].strokeDash = "0";
+                }
+                else 
+                    e[arestaAtual].color = "red";
+
+                arestaAtual++;
+
+                break;
+            default:
+                return;
         }
 
-        arestaAtual++;
+        store.dispatch({
+            type: 'ALGORITHM_STEP',
+            vertexList: vertexList,
+            edgeList: e
+        });
     }
     else {
         Finished();

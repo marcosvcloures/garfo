@@ -4,8 +4,9 @@ import Home from './view/Home.js';
 
 class App extends Component {
     componentDidMount() {
-        this.unsubscribe = store.subscribe(() =>
-            this.forceUpdate()
+        this.unsubscribe = store.subscribe(() => 
+            store.getState().Action.type === 'SET_PAGE' &&
+                this.forceUpdate()
         );
     }
 

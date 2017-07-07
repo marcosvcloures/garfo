@@ -8,9 +8,11 @@ const Algorithm = (state = { edgeList: [], vertexList: [], playing: false, speed
             return { ...state, clicked_vertex: action.id };
         case 'ALGORITHM_INIT':
             return {edgeList: action.edgeList, vertexList: action.vertexList, playing: false,
-                finished: false, started: false, step_func: action.step_func, init_func: action.init_func, speed: 1 };
+                finished: false, started: false, step_func: action.step_func, init_func: action.init_func,
+                step: -1, speed: 1 };
         case 'ALGORITHM_STEP':
-            return {...state, edgeList: action.edgeList, vertexList: action.vertexList, started: true };
+            return {...state, edgeList: action.edgeList, vertexList: action.vertexList, started: true,
+                step: state.step + 1 };
         case 'ALGORITHM_FINISH':
             return {...state, edgeList: action.edgeList, vertexList: action.vertexList, playing: false,
                 finished: true };

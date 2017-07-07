@@ -4,8 +4,10 @@ import Graph from "./Graph.js";
 import Page from "./Page.js";
 import ControlsEdit from "./ControlsEdit.js";
 import Algorithm from "./Algorithm.js";
+import Action from "./Action.js";
 
 const reducers = combineReducers({
+    Action,
     Page,
     ControlsEdit,
     Algorithm: undoable(Algorithm, {

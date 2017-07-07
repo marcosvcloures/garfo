@@ -37,26 +37,25 @@ const Vertex = (id, posX, posY, text) => {
     );
 }
 
-const Edge = (id, from, to, weight, color, strokeDash) => {
+const Edge = (id, from, to, weight, oposite, color, strokeDash) => {
     const DirectionalEdges = store.getState().Graph.present.directionalEdges;
     const WeightedEdges = store.getState().Graph.present.weightedEdges;
-
     let x, y;
 
-    if (WeightedEdges) {
+    if (WeightedEdges || oposite) {
         const mx = (from.x + to.x) / 2;
         const my = (from.y + to.y) / 2;
 
         const vx = mx - from.x;
         const vy = my - from.y;
 
-        const multi = -15 / Math.sqrt(vx * vx + vy * vy);
+        const multi = oposite ? -30 / Math.sqrt(vx * vx + vy * vy) : -15 / Math.sqrt(vx * vx + vy * vy);
 
         x = mx - vy * multi;
         y = my + vx * multi;
     }
 
-    return <g  key={id}>
+    return <g key={id}>
         {WeightedEdges && <text
             display="block"
             x={x}
@@ -66,16 +65,28 @@ const Edge = (id, from, to, weight, color, strokeDash) => {
             {weight}
         </text>}
 
-        <line x1={from.x}
-            y1={from.y}
-            x2={to.x}
-            y2={to.y}
-            className="edge"
-            strokeWidth="3"
-            strokeDasharray={strokeDash == null ? "0" : strokeDash}
-            stroke={color == null ? "black" : color }
-            markerEnd={DirectionalEdges && "url(#arrow)"}
-        />
+        { oposite ? 
+            <path
+                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y} 
+                stroke={color ? color : "black"} 
+                fill="transparent"
+                className="edge"
+                strokeWidth="3"
+                strokeDasharray={strokeDash == null ? "0" : strokeDash}
+                markerEnd={DirectionalEdges && "url(#arrow)"}
+            />
+        :
+            <line x1={from.x}
+                y1={from.y}
+                x2={to.x}
+                y2={to.y}
+                className="edge"
+                strokeWidth="3"
+                strokeDasharray={strokeDash == null ? "0" : strokeDash}
+                stroke={color ? color : "black"}
+                markerEnd={DirectionalEdges && "url(#arrow)"}
+            />
+        }
     </g>;
 }
 
@@ -128,7 +139,7 @@ const Graph = () => {
                 orient="auto"
                 markerUnits="userSpaceOnUse"
                 viewBox="0 0 15 15">
-                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
+                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="context-stroke" />
             </marker>
             <marker id="arrowEdit"
                 markerWidth="10"
@@ -138,11 +149,11 @@ const Graph = () => {
                 orient="auto"
                 markerUnits="strokeWidth"
                 viewBox="0 0 15 15">
-                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="#000" />
+                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="context-stroke" />
             </marker>
         </defs>
 
-        {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight, e.color, e.strokeDash))}
+        {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight, e.opositeEdge, e.color, e.strokeDash))}
         {VertexList.map(e => Vertex(e.id, e.x, e.y, e.label))}
     </svg>;
 }
