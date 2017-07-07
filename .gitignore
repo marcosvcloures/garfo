@@ -3,8 +3,14 @@
 # backup
 /bk
 
+# maps
+*.map
+
 # dependencies
 /node_modules
+
+# vscode
+/.vscode
 
 # testing
 /coverage
