@@ -9,7 +9,7 @@ class Home extends Component {
     render() {
         return <div className="container">
             <div className="row">
-                <div className="col s12 m4">
+                <div className="col s12 m6 l4">
                     <div className="card small teal lighten-2 hoverable" onClick={(e) => {
                         store.dispatch({
                             type: 'SET_PAGE',
@@ -26,7 +26,7 @@ class Home extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="col s12 m4">
+                <div className="col s12 m6 l4">
                     <div className="card small teal lighten-2 hoverable" onClick={(e) => {
                         store.dispatch({
                             type: 'SET_PAGE',
@@ -43,7 +43,7 @@ class Home extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="col s12 m4">
+                <div className="col s12 m6 l4">
                     <div className="card small teal lighten-2 hoverable" onClick={(e) => {
                         store.dispatch({
                             type: 'SET_PAGE',

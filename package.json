@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && rd /s /q docs && robocopy build docs /e",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }

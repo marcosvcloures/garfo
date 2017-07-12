@@ -85,6 +85,7 @@ const Graph = (state = {
         }
         case 'DOUBLE_CLICK_VERTEX':
             if (controlsState === 'DELETE') {
+                let edgeId = 0;
                 const newVertexList = state.vertexList.filter(e => e.id !== action.id).map(e => {
                     return {
                         ...e,
@@ -98,6 +99,7 @@ const Graph = (state = {
                     edgeList: state.edgeList.filter(e => e.from.id !== action.id && e.to.id !== action.id).map(e => {
                         return {
                             ...e,
+                            id: edgeId++,
                             from: e.from.id < action.id ? newVertexList[e.from.id] : newVertexList[e.from.id - 1],
                             to: e.to.id < action.id ? newVertexList[e.to.id] : newVertexList[e.to.id - 1]
                         }
@@ -154,7 +156,7 @@ const Graph = (state = {
         case 'CLICK_SVG':
             if (controlsState !== 'ADD' || state.mouseDownVertex === true)
                 return { ...state, mouseDownVertex: false };
-
+            
             return {
                 ...state,
                 vertexList: [...state.vertexList, {
