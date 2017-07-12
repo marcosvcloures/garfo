@@ -38,7 +38,6 @@ function union(a, b) {
     return true;
 }
 
-
 const Init = () => {
     edgeList = store.getState().Graph.present.edgeList.sort((a, b) => a.weight > b.weight ? 1 : -1);
     vertexList = store.getState().Graph.present.vertexList;
@@ -48,32 +47,34 @@ const Init = () => {
     store.dispatch({
         type: 'ALGORITHM_INIT',
         vertexList: vertexList,
-        edgeList: edgeList.map(e => { 
-            e.color = "#ccc"; 
-            e.strokeDash = "5, 5"; 
-            return e; }), 
+        edgeList: edgeList.map(e => { return {...e, color: "#ccc", strokeDash: "5, 5"} }),
+        vars: {Rank: Rank, p: p, arestaAtual: arestaAtual },
         step_func: Step,
-        init_func: Init
+        init_func: Init,
+        vertex_click: () => null,
+        edge_click: () => null
     });
 }
 
 const Step = () => {
+    Rank = store.getState().Algorithm.present.vars.Rank.slice();
+    p = store.getState().Algorithm.present.vars.p.slice();
+    arestaAtual = store.getState().Algorithm.present.vars.arestaAtual;
+    
     if (arestaAtual !== edgeList.length) {
         let e = store.getState().Algorithm.present.edgeList.slice();
 
         switch(store.getState().Algorithm.present.step % 2) {
             case 0:
-                e[arestaAtual].color = "orange";
+                e[arestaAtual] = {...e[arestaAtual], color: "orange"}
                 
                 break;
             case 1:
-                if (union(edgeList[arestaAtual].from.id, edgeList[arestaAtual].to.id) === true) {
-                    e[arestaAtual].color = "black"; 
-                    e[arestaAtual].strokeDash = "0";
-                }
+                if (union(edgeList[arestaAtual].from.id, edgeList[arestaAtual].to.id) === true) 
+                   e[arestaAtual] = {...e[arestaAtual], color: "black", strokeDash: "0" }
                 else 
-                    e[arestaAtual].color = "red";
-
+                   e[arestaAtual] = {...e[arestaAtual], color: "red"}
+                
                 arestaAtual++;
 
                 break;
@@ -84,7 +85,8 @@ const Step = () => {
         store.dispatch({
             type: 'ALGORITHM_STEP',
             vertexList: vertexList,
-            edgeList: e
+            edgeList: e,
+            vars: {Rank: Rank.slice(), p: p.slice(), arestaAtual: arestaAtual }
         });
     }
     else {

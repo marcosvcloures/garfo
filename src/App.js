@@ -4,14 +4,22 @@ import Home from './view/Home.js';
 
 class App extends Component {
     componentDidMount() {
-        this.unsubscribe = store.subscribe(() => 
+        this.unsubscribe = store.subscribe(() =>
             store.getState().Action.type === 'SET_PAGE' &&
-                this.forceUpdate()
+            this.forceUpdate()
         );
+
+        window.$('.container').fadeIn(1000);
+        window.$('.breadcrumb').fadeIn(1000);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        window.$('.container').fadeIn(600);
+        window.$('.breadcrumb').fadeIn(600);
     }
 
     render() {
@@ -34,6 +42,8 @@ class App extends Component {
                                 :
                                 null
                             }
+
+                            <a className="button-collapse" data-activates="right-menu"><i className="material-icons">menu</i></a>
                         </div>
                     </div>
                 </nav>

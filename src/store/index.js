@@ -11,18 +11,20 @@ const reducers = combineReducers({
     Page,
     ControlsEdit,
     Algorithm: undoable(Algorithm, {
-        filter: function filterState(action, currentState, previousState) {
-            if (action !== 'ALGORITHM_STEP')
+        undoType: 'UNDO_ALGORITHM',
+        initTypes: 'ALGORITHM_INIT',
+        filter: (action, currentState, previousState) => {
+            if(previousState === undefined)
                 return false;
 
-            if (currentState.vertexList.length !== previousState.vertexList.length ||
-                currentState.edgeList.length !== previousState.edgeList.length) 
-                return true;
-            
-            return false;
+            previousState.playing = false;
+
+            return currentState.step !== previousState.step;
         }
     }),
     Graph: undoable(Graph, {
+        undoType: 'UNDO_GRAPH',
+        redoType: 'REDO_GRAPH',
         filter: function filterState(action, currentState, previousState) {
             if (previousState === undefined)
                 return true;

@@ -1,11 +1,9 @@
 import store from "./index.js";
 
 const Graph = (state = {
-    vertexList: [], edgeList: [], mouseDownVertex: false, nextVertexId: 0,
-    nextEdgeId: 0, edgeSelected: null, vertexSelected: null, directionalEdges: true, weightedEdges: true
-},
-    action) => {
-
+    vertexList: [], edgeList: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
+    directionalEdges: true, weightedEdges: true
+}, action) => {
     if (action.from !== 'GRAPH')
         return state;
 
@@ -13,23 +11,39 @@ const Graph = (state = {
 
     switch (action.type) {
         case 'SAVE_VERTEX':
+            const newVertexList = state.vertexList.map(e => {
+                if (e.id === state.vertexSelected.id)
+                    return {
+                        ...e,
+                        label: action.label
+                    }
+
+                return e;
+            });
+
             return {
                 ...state,
-                vertexList: state.vertexList.map((e) => {
-                    if (e.id === state.vertexSelected.id)
-                        e.label = action.label;
-                    return e;
+                vertexList: newVertexList,
+                edgeList: state.edgeList.map(e => {
+                    return {
+                        ...e,
+                        from: newVertexList[e.from.id],
+                        to: newVertexList[e.to.id]
+                    }
                 }),
                 vertexSelected: null
             }
         case 'SAVE_EDGE':
             return {
                 ...state,
-                edgeList: state.edgeList.map((e) => {
-                    if (e.id === state.edgeSelected.id) {
-                        e.weight = action.weight;
-                        e.capacity = action.capacity;
-                    }
+                edgeList: state.edgeList.map(e => {
+                    if (e.id === state.edgeSelected.id)
+                        return {
+                            ...e,
+                            weight: action.weight,
+                            capacity: action.capacity
+                        }
+
                     return e;
                 }),
                 edgeSelected: null
@@ -38,16 +52,17 @@ const Graph = (state = {
             if (controlsState === 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
                 return {
                     ...state,
-                    edgeSelected: state.edgeList.find((e) => { return e.id === action.id })
+                    edgeSelected: state.edgeList.find(e => e.id === action.id)
                 }
             }
+
             return state;
         }
         case 'CLICK_VERTEX': {
             if (controlsState === 'SELECT' && state.vertexSelected == null && state.edgeSelected == null) {
                 return {
                     ...state,
-                    vertexSelected: state.vertexList.find((e) => { return e.id === action.id })
+                    vertexSelected: state.vertexList.find(e => e.id === action.id)
                 }
             }
 
@@ -57,8 +72,11 @@ const Graph = (state = {
             if (controlsState === 'DELETE') {
                 return {
                     ...state,
-                    edgeList: state.edgeList.filter(e => {
-                        return e.id !== action.id;
+                    edgeList: state.edgeList.filter(e => e.id !== action.id).map(e => {
+                        return {
+                            ...e,
+                            id: e.id < action.id ? e.id : e.id - 1
+                        }
                     })
                 }
             }
@@ -67,13 +85,22 @@ const Graph = (state = {
         }
         case 'DOUBLE_CLICK_VERTEX':
             if (controlsState === 'DELETE') {
+                const newVertexList = state.vertexList.filter(e => e.id !== action.id).map(e => {
+                    return {
+                        ...e,
+                        id: e.id < action.id ? e.id : e.id - 1
+                    }
+                });
+
                 return {
                     ...state,
-                    vertexList: state.vertexList.filter(e => {
-                        return e.id !== action.id;
-                    }),
-                    edgeList: state.edgeList.filter(e => {
-                        return e.from.id !== action.id && e.to.id !== action.id;
+                    vertexList: newVertexList,
+                    edgeList: state.edgeList.filter(e => e.from.id !== action.id && e.to.id !== action.id).map(e => {
+                        return {
+                            ...e,
+                            from: e.from.id < action.id ? newVertexList[e.from.id] : newVertexList[e.from.id - 1],
+                            to: e.to.id < action.id ? newVertexList[e.to.id] : newVertexList[e.to.id - 1]
+                        }
                     })
                 }
             }
@@ -98,24 +125,32 @@ const Graph = (state = {
 
             return state;
         case 'MOUSE_UP_VERTEX':
-            if (state.mouseDownVertex && controlsState === 'ADD')
+            if (state.mouseDownVertex && controlsState === 'ADD') {
+                if(state.edgeList.findIndex(e => e.from.id === state.mouseDownId && e.to.id === action.id) !== -1)
+                    return state;
+                    
                 return {
                     ...state,
-                    edgeList: [...state.edgeList.map((e) => {
-                            if(e.from.id === action.id && e.to.id === state.mouseDownId)
-                                e.opositeEdge = true;
-                            return e;
-                        }), {
-                        id: state.nextEdgeId,
-                        from: state.vertexList.find(e => { return e.id === state.mouseDownId; }),
-                        to: state.vertexList.find(e => { return e.id === action.id; }),
-                        opositeEdge: state.edgeList.findIndex(e => { return e.from.id === action.id && e.to.id === state.mouseDownId}) !== -1,
+                    edgeList: [...state.edgeList.map(e => {
+                        if (e.from.id === action.id && e.to.id === state.mouseDownId)
+                            return {
+                                ...e,
+                                opositeEdge: true
+                            }
+
+                        return e;
+                    }), {
+                        id: state.edgeList.length,
+                        from: state.vertexList[state.mouseDownId],
+                        to: state.vertexList[action.id],
+                        opositeEdge: state.edgeList.findIndex(e => e.from.id === action.id && e.to.id === state.mouseDownId) !== -1,
                         weight: 1
-                    }],
-                    nextEdgeId: state.nextEdgeId + 1
+                    }]
                 };
 
-            return { ...state };
+            }
+
+            return state;
         case 'CLICK_SVG':
             if (controlsState !== 'ADD' || state.mouseDownVertex === true)
                 return { ...state, mouseDownVertex: false };
@@ -123,13 +158,12 @@ const Graph = (state = {
             return {
                 ...state,
                 vertexList: [...state.vertexList, {
-                    id: state.nextVertexId,
-                    label: state.nextVertexId,
+                    id: state.vertexList.length,
+                    label: state.vertexList.length,
                     x: action.x,
                     y: action.y,
                     selected: false
-                }],
-                nextVertexId: state.nextVertexId + 1
+                }]
             };
         case 'DIRECTIONAL_EDGES':
             return { ...state, directionalEdges: !state.directionalEdges };

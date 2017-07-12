@@ -1,21 +1,11 @@
 import React, { Component } from 'react';
 import store from '../store/index.js';
-import ReactDOM from "react-dom";
 
 import GraphEdit from './GraphEdit.js';
 import Dijkstra from './Dijkstra.js';
 import Kruskal from './Kruskal.js';
 
 class Home extends Component {
-    componentDidMount() {
-        const node = ReactDOM.findDOMNode(this);
-
-        node.style.opacity = 0;
-        node.style.transition = 'all 0.6s';
-
-        setTimeout(() => node.style.opacity = 1);
-    }
-
     render() {
         return <div className="container">
             <div className="row">

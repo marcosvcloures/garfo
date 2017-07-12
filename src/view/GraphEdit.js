@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { ActionCreators } from 'redux-undo';
 import store from "../store/index.js";
 
 const Vertex = (id, posX, posY, text) => {
     return (
         <g
             key={id}
-            
+
             onClick={(e) => {
                 e.preventDefault();
 
@@ -28,7 +27,7 @@ const Vertex = (id, posX, posY, text) => {
                 });
             }}
 
-            onTouchStart = {(e) => {
+            onTouchStart={(e) => {
                 store.dispatch({
                     type: 'MOUSE_DOWN_VERTEX',
                     from: 'GRAPH',
@@ -46,17 +45,17 @@ const Vertex = (id, posX, posY, text) => {
                 });
             }}
 
-            onTouchEnd = {(e) => {
+            onTouchEnd={(e) => {
                 let clickEvent;
-                
-                clickEvent = document.createEvent ('MouseEvents');
-                clickEvent.initEvent ('mouseup', true, true);
+
+                clickEvent = document.createEvent('MouseEvents');
+                clickEvent.initEvent('mouseup', true, true);
 
                 document.elementsFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY)[0]
                     .dispatchEvent(clickEvent);
 
-                clickEvent = document.createEvent ('MouseEvents');
-                clickEvent.initEvent ('click', true, true);
+                clickEvent = document.createEvent('MouseEvents');
+                clickEvent.initEvent('click', true, true);
 
                 document.elementsFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY)[0]
                     .dispatchEvent(clickEvent);
@@ -121,17 +120,17 @@ const Edge = (id, from, to, weight, oposite) => {
             {weight}
         </text>}
 
-        { oposite ? 
+        {oposite ?
             <path
-                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y} 
-                stroke="black" 
+                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y}
+                stroke="black"
                 fill="transparent"
                 className="edge"
                 strokeWidth="3"
                 strokeDasharray="0"
                 markerEnd={DirectionalEdges && "url(#arrow)"}
             />
-        :
+            :
             <line x1={from.x}
                 y1={from.y}
                 x2={to.x}
@@ -144,7 +143,7 @@ const Edge = (id, from, to, weight, oposite) => {
             />
         }
 
-        <g 
+        <g
             onClick={e => {
                 e.preventDefault();
 
@@ -164,25 +163,25 @@ const Edge = (id, from, to, weight, oposite) => {
                     id: id
                 })
             }}>
-        { store.getState().ControlsEdit.action === 'SELECT' && (oposite ? 
-            <path
-                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y} 
-                stroke="transparent" 
-                fill="transparent"
-                className="edge edgeClickHelper"
-                strokeWidth="20"
-            />
-        :
-            <line 
-                x1={from.x}
-                y1={from.y}
-                x2={to.x}
-                y2={to.y}
-                className="edge edgeClickHelper"
-                strokeWidth="20"
-                strokeDasharray="0"
-                stroke="transparent"
-            />)} 
+            {store.getState().ControlsEdit.action === 'SELECT' && (oposite ?
+                <path
+                    d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y}
+                    stroke="transparent"
+                    fill="transparent"
+                    className="edge edgeClickHelper"
+                    strokeWidth="20"
+                />
+                :
+                <line
+                    x1={from.x}
+                    y1={from.y}
+                    x2={to.x}
+                    y2={to.y}
+                    className="edge edgeClickHelper"
+                    strokeWidth="20"
+                    strokeDasharray="0"
+                    stroke="transparent"
+                />)}
         </g>
     </g>;
 }
@@ -236,7 +235,7 @@ const Graph = () => {
                 });
             }
         }}
-        
+
         onMouseMove={(e) => {
             e.preventDefault();
 
@@ -489,9 +488,9 @@ const keyHandler = (e) => {
         return;
 
     if (e.keyCode === 90 && e.ctrlKey)
-        return store.dispatch(ActionCreators.undo());
+        return store.dispatch({ type: 'UNDO_GRAPH' });
     if (e.keyCode === 89 && e.ctrlKey)
-        return store.dispatch(ActionCreators.redo());
+        return store.dispatch({ type: 'REDO_GRAPH' });
     if (e.keyCode === 83)
         return store.dispatch({
             type: "SELECT",
@@ -516,18 +515,13 @@ const keyHandler = (e) => {
 
 class GraphEdit extends Component {
     componentDidMount() {
-        this.unsubscribe = store.subscribe(() => 
+        this.unsubscribe = store.subscribe(() =>
             this.forceUpdate()
         );
 
+        window.$(".button-collapse").sideNav();
+
         document.addEventListener("keydown", keyHandler);
-
-        const node = ReactDOM.findDOMNode(this);
-
-        node.style.opacity = 0;
-        node.style.transition = 'all 0.6s';
-
-        setTimeout(() => node.style.opacity = 1);
     }
 
     componentWillUnmount() {
@@ -543,11 +537,15 @@ class GraphEdit extends Component {
         const edgeEditing = graphState.edgeSelected !== null;
 
         return <div className="container">
-            <div className="col s3">
+            <div className="col side-nav" id="right-menu">
                 {ControlsEdit()}
             </div>
 
-            <div className="col s9 full-height">
+            <div className="col l3 hide-on-med-and-down">
+                {ControlsEdit()}
+            </div>
+
+            <div className="col s12 m12 l9 full-height">
                 {Graph()}
             </div>
 

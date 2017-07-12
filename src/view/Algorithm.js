@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from "react-dom";
 import store from "../store/index.js";
-import { ActionCreators } from 'redux-undo';
 
 let MAIN_LOOP = null, SPEED = null;
 
@@ -102,7 +100,7 @@ const Controls = () => {
                     Iniciar <i className="material-icons left">play_arrow</i>
                 </a>
             :
-            <a className="waves-effect btn" onClick={() => store.getState().Algorithm.present.init_func()}>
+            <a className="waves-effect btn" onClick={() => store.getState().Algorithm.present.init_func() }>
                 Reiniciar <i className="material-icons left">replay</i>
             </a>
         }
@@ -110,7 +108,7 @@ const Controls = () => {
         <a className="waves-effect btn" onClick={() => store.getState().Algorithm.present.step_func()}>
             Passo a frente <i className="material-icons left">redo</i>
         </a>
-        <a className="waves-effect btn" onClick={() => store.dispatch(ActionCreators.undo())}>
+        <a className="waves-effect btn" onClick={() => store.dispatch({type: 'UNDO_ALGORITHM'})}>
             Passo atrás <i className="material-icons left">undo</i>
         </a>
         <p className="range-field">
@@ -167,12 +165,7 @@ class Algorithm extends Component {
     componentDidMount() {
         document.addEventListener("keydown", keyHandler);
 
-        const node = ReactDOM.findDOMNode(this);
-
-        node.style.opacity = 0;
-        node.style.transition = 'all 0.6s';
-
-        setTimeout(() => node.style.opacity = 1);
+        window.$(".button-collapse").sideNav();
 
         this.unsubscribe = store.subscribe(() => {
             this.forceUpdate();
@@ -207,14 +200,15 @@ class Algorithm extends Component {
 
     render() {
         return <div className="container">
-            <div className="col s3">
+            <div className="col side-nav" id="right-menu">
                 {Controls()}
-                <code>
-                    PSEUDO-CODIGO
-                </code>
             </div>
 
-            <div className="col s9 full-height">
+            <div className="col l3 hide-on-med-and-down">
+                {Controls()}
+            </div>
+
+            <div className="col s12 m12 l9 full-height">
                 {Graph()}
             </div>
         </div>;
