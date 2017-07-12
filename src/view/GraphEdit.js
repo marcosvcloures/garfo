@@ -519,7 +519,12 @@ class GraphEdit extends Component {
             this.forceUpdate()
         );
 
-        window.$(".button-collapse").sideNav();
+        window.$(".button-collapse").sideNav({
+            menuWidth: 250,
+            edge: 'left',
+            closeOnClick: true,
+            draggable: true
+        });
 
         document.addEventListener("keydown", keyHandler);
     }

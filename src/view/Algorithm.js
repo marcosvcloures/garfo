@@ -63,17 +63,17 @@ const Edge = (id, from, to, weight, oposite, color, strokeDash) => {
             {weight}
         </text>}
 
-        { oposite ? 
+        {oposite ?
             <path
-                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y} 
-                stroke={color ? color : "black"} 
+                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y}
+                stroke={color ? color : "black"}
                 fill="transparent"
                 className="edge"
                 strokeWidth="3"
                 strokeDasharray={strokeDash == null ? "0" : strokeDash}
                 markerEnd={DirectionalEdges && "url(#arrow)"}
             />
-        :
+            :
             <line x1={from.x}
                 y1={from.y}
                 x2={to.x}
@@ -90,7 +90,7 @@ const Edge = (id, from, to, weight, oposite, color, strokeDash) => {
 
 const Controls = () => {
     return <div className="side-menu">
-        { !store.getState().Algorithm.present.finished ? 
+        {!store.getState().Algorithm.present.finished ?
             store.getState().Algorithm.present.playing ?
                 <a className="waves-effect btn" onClick={() => store.dispatch({ type: 'PLAY_PAUSE' })}>
                     Pausar <i className="material-icons left">pause</i>
@@ -100,17 +100,17 @@ const Controls = () => {
                     Iniciar <i className="material-icons left">play_arrow</i>
                 </a>
             :
-            <a className="waves-effect btn" onClick={() => store.getState().Algorithm.present.init_func() }>
+            <span className="waves-effect btn" onClick={() => store.getState().Algorithm.present.init_func()}>
                 Reiniciar <i className="material-icons left">replay</i>
-            </a>
+            </span>
         }
-        
-        <a className="waves-effect btn" onClick={() => store.getState().Algorithm.present.step_func()}>
+
+        <span className="waves-effect btn" onClick={() => store.getState().Algorithm.present.step_func()}>
             Passo a frente <i className="material-icons left">redo</i>
-        </a>
-        <a className="waves-effect btn" onClick={() => store.dispatch({type: 'UNDO_ALGORITHM'})}>
+        </span>
+        <span className="waves-effect btn" onClick={() => store.dispatch({ type: 'UNDO_ALGORITHM' })}>
             Passo atrás <i className="material-icons left">undo</i>
-        </a>
+        </span>
         <p className="range-field">
             <input type="range" id="speed" min="1" max="5" value={store.getState().Algorithm.present.speed} onChange={(e) =>
                 store.dispatch({
@@ -161,11 +161,16 @@ class Algorithm extends Component {
         MAIN_LOOP = null;
         SPEED = null;
     }
-    
+
     componentDidMount() {
         document.addEventListener("keydown", keyHandler);
-
-        window.$(".button-collapse").sideNav();
+        
+        window.$(".button-collapse").sideNav({
+            menuWidth: 250,
+            edge: 'left',
+            closeOnClick: true,
+            draggable: true
+        });
 
         this.unsubscribe = store.subscribe(() => {
             this.forceUpdate();
@@ -175,12 +180,12 @@ class Algorithm extends Component {
 
                 MAIN_LOOP = setInterval(() => store.getState().Algorithm.present.step_func(), 2000 / store.getState().Algorithm.present.speed);
             }
-            else if(store.getState().Algorithm.present.playing === false && MAIN_LOOP !== null) {
+            else if (store.getState().Algorithm.present.playing === false && MAIN_LOOP !== null) {
                 clearInterval(MAIN_LOOP);
 
                 MAIN_LOOP = null;
             }
-            else if(store.getState().Algorithm.present.playing === true && MAIN_LOOP !== null && store.getState().Algorithm.present.speed !== SPEED) {
+            else if (store.getState().Algorithm.present.playing === true && MAIN_LOOP !== null && store.getState().Algorithm.present.speed !== SPEED) {
                 clearInterval(MAIN_LOOP);
 
                 SPEED = store.getState().Algorithm.present.speed;
