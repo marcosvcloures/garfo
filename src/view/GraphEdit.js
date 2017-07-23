@@ -556,6 +556,22 @@ class GraphEdit extends Component {
 
             {vertexEditing && <VertexProps key={0} />}
             {edgeEditing && <EdgeProps key={1} />}
+
+            <div className="col s12 m12 hide-on-large-only" style={{ top: "-10px", position: "relative" }}>
+                {store.getState().Graph.past.length > 0 &&
+                    <span className="waves-effect waves-light btn-floating" style={{ textTransform: 'none', float: 'left' }}
+                        onClick={() => store.dispatch({ type: 'UNDO_GRAPH' })}>
+                        <i className="material-icons left">undo</i>
+                    </span>
+                }
+
+                {store.getState().Graph.future.length > 0 &&
+                    <span className="waves-effect waves-light btn-floating" style={{ textTransform: 'none', float: 'right' }}
+                        onClick={() => store.dispatch({ type: 'REDO_GRAPH' })}>
+                        <i className="material-icons left">redo</i>
+                    </span>
+                }
+            </div>
         </div>;
     }
 }

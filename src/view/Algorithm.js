@@ -105,12 +105,18 @@ const Controls = () => {
             </span>
         }
 
-        <span className="waves-effect btn" onClick={() => store.getState().Algorithm.present.step_func()}>
-            Passo a frente <i className="material-icons left">redo</i>
-        </span>
-        <span className="waves-effect btn" onClick={() => store.dispatch({ type: 'UNDO_ALGORITHM' })}>
-            Passo atrás <i className="material-icons left">undo</i>
-        </span>
+        {store.getState().Algorithm.past.length > 0 &&
+            <span className="waves-effect btn" onClick={() => store.getState().Algorithm.present.step_func()}>
+                Passo a frente <i className="material-icons left">redo</i>
+            </span>
+        }
+
+        {!store.getState().Algorithm.present.finished &&
+            <span className="waves-effect btn" onClick={() => store.dispatch({ type: 'UNDO_ALGORITHM' })}>
+                Passo atrás <i className="material-icons left">undo</i>
+            </span>
+        }
+
         <p className="range-field">
             <input type="range" id="speed" min="1" max="5" value={store.getState().Algorithm.present.speed} onChange={(e) =>
                 store.dispatch({
@@ -164,7 +170,7 @@ class Algorithm extends Component {
 
     componentDidMount() {
         document.addEventListener("keydown", keyHandler);
-        
+
         window.$(".button-collapse").sideNav({
             menuWidth: 250,
             edge: 'left',
@@ -215,6 +221,22 @@ class Algorithm extends Component {
 
             <div className="col s12 m12 l9 full-height">
                 {Graph()}
+            </div>
+
+            <div className="col s12 m12 hide-on-large-only" style={{ top: "-10px", position: "relative" }}>
+                {store.getState().Algorithm.past.length > 0 &&
+                    <span className="waves-effect btn-floating" style={{ textTransform: 'none', float: 'left' }}
+                        onClick={() => store.dispatch({ type: 'UNDO_ALGORITHM' })}>
+                        <i className="material-icons left">undo</i>
+                    </span>
+                }
+
+                {!store.getState().Algorithm.present.finished &&
+                    <span className="waves-effect btn-floating" style={{ textTransform: 'none', float: 'right' }}
+                        onClick={() => store.getState().Algorithm.present.step_func()}>
+                        <i className="material-icons left">redo</i>
+                    </span>
+                }
             </div>
         </div>;
     }

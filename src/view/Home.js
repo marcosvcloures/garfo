@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import store from '../store/index.js';
 
-import GraphEdit from './GraphEdit.js';
-import Dijkstra from './Dijkstra.js';
-import Kruskal from './Kruskal.js';
-
 class Home extends Component {
     render() {
         return <div className="container">
@@ -13,8 +9,7 @@ class Home extends Component {
                     <div className="card small teal lighten-2 hoverable" onClick={(e) => {
                         store.dispatch({
                             type: 'SET_PAGE',
-                            name: 'Editar grafo',
-                            component: <GraphEdit />
+                            id: 'Edit'
                         })
                     }}>
                         <div className="card-content white-text">
@@ -30,8 +25,7 @@ class Home extends Component {
                     <div className="card small teal lighten-2 hoverable" onClick={(e) => {
                         store.dispatch({
                             type: 'SET_PAGE',
-                            name: 'Kruskal',
-                            component: <Kruskal />
+                            id: 'Kruskal'
                         })
                     }}>
                         <div className="card-content white-text">
@@ -47,8 +41,7 @@ class Home extends Component {
                     <div className="card small teal lighten-2 hoverable" onClick={(e) => {
                         store.dispatch({
                             type: 'SET_PAGE',
-                            name: 'Dijkstra',
-                            component: <Dijkstra />
+                            id: 'Dijkstra'
                         })
                     }}>
                         <div className="card-content white-text">

@@ -1,16 +1,23 @@
 import React, { Component } from 'react';
 import store from './store/index.js';
-import Home from './view/Home.js';
 
 class App extends Component {
+    componentWillMount() {
+        let nextState = { id: store.getState().Page.id, type: 'SET_PAGE' };
+
+        window.history.replaceState(nextState, "Garfo - " + store.getState().Page.name,
+            store.getState().Page.id.split(' ').join('_'));
+    }
+
     componentDidMount() {
         this.unsubscribe = store.subscribe(() =>
             store.getState().Action.type === 'SET_PAGE' &&
             this.forceUpdate()
         );
+        window.$('.container').velocity("fadeIn", { duration: 600 })
+        window.$('.breadcrumb').velocity("fadeIn", { duration: 600 })
 
-        window.$('.container').fadeIn(1000);
-        window.$('.breadcrumb').fadeIn(1000);
+        window.onpopstate = e => store.dispatch(e.state);
     }
 
     componentWillUnmount() {
@@ -18,6 +25,12 @@ class App extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        let nextState = { id: store.getState().Page.id, type: 'SET_PAGE' }
+
+        if (window.history.state.id !== nextState.id)
+            window.history.pushState(nextState, "Garfo - " + store.getState().Page.name,
+                store.getState().Page.id.split(' ').join('_'));
+
         window.$('.container').fadeIn(600);
         window.$('.breadcrumb').fadeIn(600);
     }
@@ -28,16 +41,15 @@ class App extends Component {
                 <nav>
                     <div className="nav-wrapper">
                         <div className="col s12">
-                            <a className="breadcrumb" onClick={() => {
-                                store.dispatch({
-                                    type: 'SET_PAGE',
-                                    name: 'Home',
-                                    component: <Home />
-                                })
+                            <a className="breadcrumb" onClick={(e) => {
+                                e.preventDefault();
+                                
+                                if(store.getState().Page.id !== 'Home')
+                                    window.history.back();
                             }}>
                                 Garfo
                             </a>
-                            {store.getState().Page.name !== 'Home' ?
+                            {store.getState().Page.id !== 'Home' ?
                                 <a className="breadcrumb">{store.getState().Page.name}</a>
                                 :
                                 null
