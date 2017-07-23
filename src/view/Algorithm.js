@@ -105,13 +105,13 @@ const Controls = () => {
             </span>
         }
 
-        {store.getState().Algorithm.past.length > 0 &&
+        {!store.getState().Algorithm.present.finished &&
             <span className="waves-effect btn" onClick={() => store.getState().Algorithm.present.step_func()}>
                 Passo a frente <i className="material-icons left">redo</i>
             </span>
         }
 
-        {!store.getState().Algorithm.present.finished &&
+        {store.getState().Algorithm.past.length > 0 &&
             <span className="waves-effect btn" onClick={() => store.dispatch({ type: 'UNDO_ALGORITHM' })}>
                 Passo atrás <i className="material-icons left">undo</i>
             </span>
