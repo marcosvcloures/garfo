@@ -95,9 +95,20 @@ const Vertex = (id, posX, posY, text) => {
 const Edge = (id, from, to, weight, oposite) => {
     const DirectionalEdges = store.getState().Graph.present.directionalEdges;
     const WeightedEdges = store.getState().Graph.present.weightedEdges;
-    let x, y;
+    let x, y, loop;
 
-    if (WeightedEdges || oposite) {
+    if(from === to)
+        loop = true;
+    else
+        loop = false;
+
+    if (loop) {
+        x = from.x;
+        y = from.y + 70;
+
+        oposite = true;
+    }
+    else if (WeightedEdges || oposite) {
         const mx = (from.x + to.x) / 2;
         const my = (from.y + to.y) / 2;
 
@@ -114,7 +125,7 @@ const Edge = (id, from, to, weight, oposite) => {
         {WeightedEdges && <text
             display="block"
             x={x}
-            y={y}
+            y={y + (loop ? - 20 : 0)}
             textAnchor="middle"
             alignmentBaseline="central">
             {weight}
@@ -445,7 +456,7 @@ class EdgeProps extends React.Component {
                 <h4>Editar aresta</h4>
                 <div className="row">
                     <div className="input-field col s12">
-                        <input id="edgeWeight" type="text"
+                        <input id="edgeWeight" type="number"
                             autoFocus
                             value={this.state.weight}
                             onKeyPress={this.handleKeyPress}
@@ -455,7 +466,7 @@ class EdgeProps extends React.Component {
                         <label htmlFor="edgeWeight">Peso</label>
                     </div>
                     <div className="input-field col s12">
-                        <input id="edgeCapacity" type="text"
+                        <input id="edgeCapacity" type="number"
                             value={this.state.capacity}
                             onKeyPress={this.handleKeyPress}
                             onChange={(e) => this.setState({ capacity: e.target.value })} />
@@ -557,7 +568,7 @@ class GraphEdit extends Component {
             {vertexEditing && <VertexProps key={0} />}
             {edgeEditing && <EdgeProps key={1} />}
 
-            <div className="col s12 m12 hide-on-large-only" style={{ top: "-10px", position: "relative" }}>
+            <div className="col s12 m12 l9 offset-l3" style={{ top: "-10px", position: "relative" }}>
                 {store.getState().Graph.past.length > 0 &&
                     <span className="waves-effect waves-light btn-floating" style={{ textTransform: 'none', float: 'left' }}
                         onClick={() => store.dispatch({ type: 'UNDO_GRAPH' })}>

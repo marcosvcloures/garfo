@@ -14,8 +14,9 @@ class App extends Component {
             store.getState().Action.type === 'SET_PAGE' &&
             this.forceUpdate()
         );
-        window.$('.container').velocity("fadeIn", { duration: 600 })
-        window.$('.breadcrumb').velocity("fadeIn", { duration: 600 })
+
+        setTimeout(() => window.$('.container').addClass('appear'), 10)
+        setTimeout(() => window.$('.breadcrumb').addClass('appear'), 10)
 
         window.onpopstate = e => store.dispatch(e.state);
     }
@@ -31,8 +32,10 @@ class App extends Component {
             window.history.pushState(nextState, "Garfo - " + store.getState().Page.name,
                 store.getState().Page.id.split(' ').join('_'));
 
-        window.$('.container').fadeIn(600);
-        window.$('.breadcrumb').fadeIn(600);
+        window.$('.container').removeClass('appear')
+
+        setTimeout(() => window.$('.container').addClass('appear'), 10)
+        setTimeout(() => window.$('.breadcrumb').addClass('appear'), 10)
     }
 
     render() {

@@ -38,9 +38,20 @@ const Vertex = (id, posX, posY, text) => {
 const Edge = (id, from, to, weight, oposite, color, strokeDash) => {
     const DirectionalEdges = store.getState().Graph.present.directionalEdges;
     const WeightedEdges = store.getState().Graph.present.weightedEdges;
-    let x, y;
+    let x, y, loop;
 
-    if (WeightedEdges || oposite) {
+    if(from === to)
+        loop = true;
+    else
+        loop = false;
+
+    if (loop) {
+        x = from.x;
+        y = from.y + 70;
+
+        oposite = true;
+    }
+    else if (WeightedEdges || oposite) {
         const mx = (from.x + to.x) / 2;
         const my = (from.y + to.y) / 2;
 
@@ -57,7 +68,7 @@ const Edge = (id, from, to, weight, oposite, color, strokeDash) => {
         {WeightedEdges && <text
             display="block"
             x={x}
-            y={y}
+            y={y + (loop ? - 20 : 0)}
             textAnchor="middle"
             alignmentBaseline="central">
             {weight}
