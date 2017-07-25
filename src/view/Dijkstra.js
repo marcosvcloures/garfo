@@ -10,13 +10,13 @@ let adjList;
 
 class Modal extends React.Component {
     componentDidMount() {
-        window.$('.modal').modal({
+        window.$('#modalDijkstra').modal({
             dismissible: true
         })
     }
 
     render() {
-        return <div className="modal">
+        return <div className="modal" id="modalDijkstra">
             <div className="modal-content">
                 <h4>Escolha o vértice inicial</h4>
                 <div className="row">
@@ -108,7 +108,7 @@ const Step = () => {
     }
     else {
         Init();
-        window.$('.modal').modal('open');
+        window.$('#modalDijkstra').modal('open');
     }
 }
 
