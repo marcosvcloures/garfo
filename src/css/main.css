@@ -49,7 +49,7 @@ nav a.button-collapse {
 
     .side-menu-xl {
         display: block;
-        top: 10px;
+        top: 70px;
         width: 200px;
         position: fixed;
         left: 20px;
@@ -120,7 +120,7 @@ svg path line {
 
 .clear-graph {
     width: 227.5px;
-    bottom: 70px;
+    bottom: 20px;
     text-align: center;
     display: block;
     position: fixed;
