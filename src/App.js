@@ -24,6 +24,7 @@ class App extends Component {
     }
 
     componentWillUnmount() {
+        console.log("teste");
         this.unsubscribe();
     }
 
