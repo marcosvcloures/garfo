@@ -10,6 +10,11 @@ const Graph = (state = {
     const controlsState = store.getState().ControlsEdit.action;
 
     switch (action.type) {
+        case 'CLEAR_GRAPH':
+            return {
+                vertexList: [], edgeList: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
+                directionalEdges: true, weightedEdges: true
+            };
         case 'SAVE_VERTEX':
             const newVertexList = state.vertexList.map(e => {
                 if (e.id === state.vertexSelected.id)
@@ -128,9 +133,9 @@ const Graph = (state = {
             return state;
         case 'MOUSE_UP_VERTEX':
             if (state.mouseDownVertex && controlsState === 'ADD') {
-                if(state.edgeList.findIndex(e => e.from.id === state.mouseDownId && e.to.id === action.id) !== -1)
+                if (state.edgeList.findIndex(e => e.from.id === state.mouseDownId && e.to.id === action.id) !== -1)
                     return state;
-                    
+
                 return {
                     ...state,
                     edgeList: [...state.edgeList.map(e => {
@@ -157,7 +162,7 @@ const Graph = (state = {
         case 'CLICK_SVG':
             if (controlsState !== 'ADD' || state.mouseDownVertex === true)
                 return { ...state, mouseDownVertex: false };
-            
+
             return {
                 ...state,
                 vertexList: [...state.vertexList, {

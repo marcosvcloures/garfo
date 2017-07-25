@@ -92,7 +92,7 @@ const Step = () => {
             if(e.id === present.vars.source) 
                 return {...e, color: "darkorange"}
             else if(e.id === atual.id)
-                return {...e, color: "black", helperText: atual.cost}
+                return {...e, color: "black", helperText: String(atual.cost)}
             else if(!visited[e.id] && queue.find(p => p.id === e.id)) {
                 return {...e, helperText: queue.find(p => p.id === e.id).cost}
             }

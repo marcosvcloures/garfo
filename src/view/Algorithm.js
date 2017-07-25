@@ -246,15 +246,15 @@ class Algorithm extends Component {
                 {Controls()}
             </div>
 
-            <div className="col l3 hide-on-med-and-down">
+            <div className="side-menu-xl">
                 {Controls()}
             </div>
 
-            <div className="col s12 m12 l9 full-height">
+            <div className="col s12 full-height">
                 {Graph()}
             </div>
 
-            <div className="col s12 m12 hide-on-large-only" style={{ top: "-10px", position: "relative" }}>
+            <div className="col s12" style={{ top: "-10px", position: "relative" }}>
                 {store.getState().Algorithm.past.length > 0 &&
                     <span className="waves-effect btn-floating" style={{ textTransform: 'none', float: 'left' }}
                         onClick={() => store.dispatch({ type: 'UNDO_ALGORITHM' })}>

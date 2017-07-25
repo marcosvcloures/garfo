@@ -174,25 +174,26 @@ const Edge = (id, from, to, weight, oposite) => {
                     id: id
                 })
             }}>
-            {store.getState().ControlsEdit.action === 'SELECT' && (oposite ?
-                <path
-                    d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y}
-                    stroke="transparent"
-                    fill="transparent"
-                    className="edge edgeClickHelper"
-                    strokeWidth="20"
-                />
-                :
-                <line
-                    x1={from.x}
-                    y1={from.y}
-                    x2={to.x}
-                    y2={to.y}
-                    className="edge edgeClickHelper"
-                    strokeWidth="20"
-                    strokeDasharray="0"
-                    stroke="transparent"
-                />)}
+            {(store.getState().ControlsEdit.action === 'SELECT' ||
+                store.getState().ControlsEdit.action === 'DELETE') && (oposite ?
+                    <path
+                        d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y}
+                        stroke="transparent"
+                        fill="transparent"
+                        className="edge edgeClickHelper"
+                        strokeWidth="20"
+                    />
+                    :
+                    <line
+                        x1={from.x}
+                        y1={from.y}
+                        x2={to.x}
+                        y2={to.y}
+                        className="edge edgeClickHelper"
+                        strokeWidth="20"
+                        strokeDasharray="0"
+                        stroke="transparent"
+                    />)}
         </g>
     </g>;
 }
@@ -302,7 +303,7 @@ const Button = (text, value) => {
             from: 'CONTROLS_EDIT'
         })}>
 
-        {text}
+        <u>{text[0]}</u>{text.slice(1)}
 
     </a>;
 }
@@ -330,6 +331,15 @@ const ControlsEdit = () => {
                 })} />
             <label htmlFor="weighted">Arestas com peso</label>
         </p>
+
+        <a className="waves-effect btn-flat clear-graph waves-red"
+            onClick={() => store.dispatch({
+                type: 'CLEAR_GRAPH',
+                from: 'GRAPH'
+            })}>
+
+            Apagar tudo
+        </a>
     </div>;
 }
 
@@ -344,7 +354,7 @@ class VertexProps extends Component {
     handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             this.save();
-        
+
             window.$('#vertexEdit').modal('close')
         }
     }
@@ -545,7 +555,13 @@ class GraphEdit extends Component {
             draggable: true
         });
 
-        window.$('.modal').modal()
+        window.$('#vertexEdit').modal({
+            dismissible: false
+        })
+
+        window.$('#edgeEdit').modal({
+            dismissible: false
+        })
 
         document.addEventListener("keydown", keyHandler);
     }
@@ -576,18 +592,18 @@ class GraphEdit extends Component {
                 {ControlsEdit()}
             </div>
 
-            <div className="col l3 hide-on-med-and-down">
+            <div className="side-menu-xl">
                 {ControlsEdit()}
             </div>
 
-            <div className="col s12 m12 l9 full-height">
+            <div className="col s12 full-height">
                 {Graph()}
             </div>
 
             <VertexProps vertex={graphState.vertexSelected} />
             <EdgeProps edge={graphState.edgeSelected} />
 
-            <div className="col s12 m12 l9 offset-l3" style={{ top: "-10px", position: "relative" }}>
+            <div className="col s12" style={{ top: "-10px", position: "relative" }}>
                 {store.getState().Graph.past.length > 0 &&
                     <span className="waves-effect waves-light btn-floating" style={{ textTransform: 'none', float: 'left' }}
                         onClick={() => store.dispatch({ type: 'UNDO_GRAPH' })}>

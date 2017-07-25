@@ -34,6 +34,28 @@ nav {
     background-color: #26a69a;
 }
 
+nav a.button-collapse {
+    display: block;
+}
+
+.side-menu-xl {
+    display: none;
+}
+
+@media screen and (min-width: 1500px) {
+    nav a.button-collapse {
+        display: none;
+    }
+
+    .side-menu-xl {
+        display: block;
+        top: 70px;
+        width: 200px;
+        position: fixed;
+        left: 20px;
+    }
+}
+
 .side-menu .btn {
     display: block;
     margin: 10px 0;
@@ -94,4 +116,17 @@ svg path line {
 
 .btn, .btn-flat {
     text-transform: none !important;
+}
+
+.clear-graph {
+    width: 227.5px;
+    bottom: 70px;
+    text-align: center;
+    display: block;
+    position: fixed;
+}
+
+.side-menu-xl .side-menu .clear-graph {
+    width: 200.5px;
+    bottom: 20px;
 }
