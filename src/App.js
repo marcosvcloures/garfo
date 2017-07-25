@@ -24,11 +24,12 @@ class App extends Component {
     }
 
     componentWillUnmount() {
-        console.log("teste");
         this.unsubscribe();
     }
 
     componentDidUpdate() {
+
+        console.log("teste");
         let nextState = { id: store.getState().Page.id, type: 'SET_PAGE' }
 
         if (window.history.state.id !== nextState.id)
