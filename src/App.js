@@ -15,6 +15,8 @@ class App extends Component {
             this.forceUpdate()
         );
 
+        window.$('#newContent').modal()
+
         setTimeout(() => window.$('.container').addClass('appear'), 10)
         setTimeout(() => window.$('.breadcrumb').addClass('appear'), 10)
 
@@ -46,8 +48,8 @@ class App extends Component {
                         <div className="col s12">
                             <a className="breadcrumb" onClick={(e) => {
                                 e.preventDefault();
-                                
-                                if(store.getState().Page.id !== 'Home')
+
+                                if (store.getState().Page.id !== 'Home')
                                     window.history.back();
                             }}>
                                 Garfo
@@ -63,6 +65,20 @@ class App extends Component {
                     </div>
                 </nav>
                 {store.getState().Page.component}
+
+                <div id="newContent" className="modal bottom-sheet">
+                    <div className="modal-content">
+                        <i className="material-icons right">loop</i>
+                        <h4>Atualização!</h4>
+                        <p>Há uma nova versão do aplicativo! Clique no botão abaixo para atualizar.</p>
+                    </div>
+                    <div className="modal-footer">
+                        <a onClick={() => setTimeout(() => window.location.reload(), 200) }
+                            className="modal-action modal-close waves-effect waves-green btn">
+                            Atualizar
+                        </a>
+                    </div>
+                </div>
             </div >
         );
     }

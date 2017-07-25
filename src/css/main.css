@@ -91,3 +91,7 @@ svg path line {
 .edgeClickHelper {
     cursor: pointer;
 }
+
+.btn, .btn-flat {
+    text-transform: none !important;
+}
