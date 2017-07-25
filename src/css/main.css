@@ -120,7 +120,7 @@ svg path line {
 
 .clear-graph {
     width: 227.5px;
-    bottom: 20px;
+    bottom: 10px;
     text-align: center;
     display: block;
     position: fixed;
@@ -128,5 +128,4 @@ svg path line {
 
 .side-menu-xl .side-menu .clear-graph {
     width: 200.5px;
-    bottom: 20px;
 }
