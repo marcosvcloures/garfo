@@ -6,7 +6,7 @@ class App extends Component {
         let nextState = { id: store.getState().Page.id, type: 'SET_PAGE' };
 
         window.history.replaceState(nextState, "Garfo - " + store.getState().Page.name,
-            store.getState().Page.id.split(' ').join('_'));
+            "#" + store.getState().Page.id.split(' ').join('_'));
     }
 
     componentDidMount() {
@@ -24,7 +24,6 @@ class App extends Component {
     }
 
     componentWillUnmount() {
-        console.log("teste");
         this.unsubscribe();
     }
 
@@ -33,7 +32,7 @@ class App extends Component {
 
         if (window.history.state.id !== nextState.id)
             window.history.pushState(nextState, "Garfo - " + store.getState().Page.name,
-                store.getState().Page.id.split(' ').join('_'));
+                "#" + store.getState().Page.id.split(' ').join('_'));
 
         window.$('.container').removeClass('appear')
 
