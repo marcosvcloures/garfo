@@ -28,8 +28,6 @@ class App extends Component {
     }
 
     componentDidUpdate() {
-
-        console.log("teste");
         let nextState = { id: store.getState().Page.id, type: 'SET_PAGE' }
 
         if (window.history.state.id !== nextState.id)
