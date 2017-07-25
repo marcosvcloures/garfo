@@ -47,7 +47,7 @@ const Init = () => {
     store.dispatch({
         type: 'ALGORITHM_INIT',
         vertexList: vertexList,
-        edgeList: edgeList.map(e => { return {...e, color: "#ccc", strokeDash: "5, 5"} }),
+        edgeList: edgeList.map(e => { return {...e, color: "#ccc", strokeDash: "5"} }),
         vars: {Rank: Rank, p: p, arestaAtual: arestaAtual },
         step_func: Step,
         init_func: Init,
@@ -96,9 +96,7 @@ const Step = () => {
 
 const Finished = () => {
     store.dispatch({
-        type: 'ALGORITHM_FINISH',
-        vertexList: vertexList,
-        edgeList: store.getState().Algorithm.present.edgeList
+        type: 'ALGORITHM_FINISH'
     });
 }
 

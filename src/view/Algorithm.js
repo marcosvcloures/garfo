@@ -6,93 +6,104 @@ let MAIN_LOOP = null, SPEED = null;
 const keyHandler = (e) => {
 }
 
-const Vertex = (id, posX, posY, text) => {
+const Vertex = (vertex) => {
     return (
-        <g key={id}
-            onClick={() => store.dispatch({
-                type: "VERTEX_CLICK",
-                id: id
-            })}>
+        <g key={vertex.id}
+            onClick={() => {
+                if (typeof (store.getState().Algorithm.present.vertex_click) === "function")
+                    store.getState().Algorithm.present.vertex_click(vertex)
+            }}>
 
             <circle
-                cx={posX}
-                cy={posY}
+                cx={vertex.x}
+                cy={vertex.y}
                 r="20"
-                stroke="black"
+                stroke={vertex.color || "black"}
                 strokeWidth="3"
+                strokeDasharray={vertex.strokeDash || '0'}
                 fill="white"
             />
 
             <text
                 display="block"
-                x={posX}
-                y={posY}
+                x={vertex.x}
+                y={vertex.y}
                 textAnchor="middle"
                 alignmentBaseline="central">
-                {text}
+                {vertex.label}
             </text>
+
+            {vertex.helperText &&
+                <text
+                    display="block"
+                    x={vertex.x + 20}
+                    y={vertex.y - 20}
+                    textAnchor="start"
+                    alignmentBaseline="central">
+                    {vertex.helperText}
+                </text>
+            }
         </g>
     );
 }
 
-const Edge = (id, from, to, weight, oposite, color, strokeDash) => {
+const Edge = (edge) => {
     const DirectionalEdges = store.getState().Graph.present.directionalEdges;
     const WeightedEdges = store.getState().Graph.present.weightedEdges;
+
     let x, y, loop;
 
-    if(from === to)
+    if (edge.from === edge.to)
         loop = true;
     else
         loop = false;
 
     if (loop) {
-        x = from.x;
-        y = from.y + 70;
-
-        oposite = true;
+        x = edge.from.x;
+        y = edge.from.y + 70;
     }
-    else if (WeightedEdges || oposite) {
-        const mx = (from.x + to.x) / 2;
-        const my = (from.y + to.y) / 2;
+    else if (WeightedEdges || edge.opositeEdge) {
+        const mx = (edge.from.x + edge.to.x) / 2;
+        const my = (edge.from.y + edge.to.y) / 2;
 
-        const vx = mx - from.x;
-        const vy = my - from.y;
+        const vx = mx - edge.from.x;
+        const vy = my - edge.from.y;
 
-        const multi = oposite ? -30 / Math.sqrt(vx * vx + vy * vy) : -15 / Math.sqrt(vx * vx + vy * vy);
+        const multi = edge.opositeEdge ? -30 / Math.sqrt(vx * vx + vy * vy) : -15 / Math.sqrt(vx * vx + vy * vy);
 
         x = mx - vy * multi;
         y = my + vx * multi;
     }
 
-    return <g key={id}>
+    return <g key={edge.id}>
         {WeightedEdges && <text
             display="block"
             x={x}
             y={y + (loop ? - 20 : 0)}
             textAnchor="middle"
             alignmentBaseline="central">
-            {weight}
+            {edge.weight}
         </text>}
 
-        {oposite ?
+        {edge.opositeEdge || loop ?
             <path
-                d={"M " + from.x + " " + from.y + " Q " + x + " " + y + " " + to.x + " " + to.y}
-                stroke={color ? color : "black"}
+                d={"M " + edge.from.x + " " + edge.from.y + " Q " + x + " " + y + " " + edge.to.x + " " + edge.to.y}
+                stroke={edge.color || "black"}
                 fill="transparent"
                 className="edge"
                 strokeWidth="3"
-                strokeDasharray={strokeDash == null ? "0" : strokeDash}
+                strokeDasharray={edge.strokeDash || '0'}
                 markerEnd={DirectionalEdges && "url(#arrow)"}
             />
             :
-            <line x1={from.x}
-                y1={from.y}
-                x2={to.x}
-                y2={to.y}
+            <line x1={edge.from.x}
+                y1={edge.from.y}
+                x2={edge.to.x}
+                y2={edge.to.y}
                 className="edge"
                 strokeWidth="3"
-                strokeDasharray={strokeDash == null ? "0" : strokeDash}
-                stroke={color ? color : "black"}
+                strokeDasharray={edge.strokeDash || '0'}
+                stroke={edge.color || "black"}
                 markerEnd={DirectionalEdges && "url(#arrow)"}
             />
         }
@@ -168,8 +179,8 @@ const Graph = () => {
             </marker>
         </defs>
 
-        {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight, e.opositeEdge, e.color, e.strokeDash))}
-        {VertexList.map(e => Vertex(e.id, e.x, e.y, e.label))}
+        {EdgeList.map(e => Edge(e))}
+        {VertexList.map(e => Vertex(e))}
     </svg>;
 }
 
@@ -190,12 +201,21 @@ class Algorithm extends Component {
         });
 
         this.unsubscribe = store.subscribe(() => {
+            if (store.getState().Action.type === 'SET_PAGE')
+                return;
+
             this.forceUpdate();
 
             if (store.getState().Algorithm.present.playing === true && MAIN_LOOP === null) {
                 SPEED = store.getState().Algorithm.present.speed;
 
-                MAIN_LOOP = setInterval(() => store.getState().Algorithm.present.step_func(), 2000 / store.getState().Algorithm.present.speed);
+                MAIN_LOOP = "gambiarra :3"
+                store.getState().Algorithm.present.step_func()
+
+                MAIN_LOOP = setInterval(() => {
+                    if (store.getState().Algorithm.present.playing)
+                        store.getState().Algorithm.present.step_func()
+                }, 2000 / store.getState().Algorithm.present.speed);
             }
             else if (store.getState().Algorithm.present.playing === false && MAIN_LOOP !== null) {
                 clearInterval(MAIN_LOOP);
@@ -242,10 +262,16 @@ class Algorithm extends Component {
                     </span>
                 }
 
-                {!store.getState().Algorithm.present.finished &&
+                {!store.getState().Algorithm.present.finished ?
                     <span className="waves-effect btn-floating" style={{ textTransform: 'none', float: 'right' }}
                         onClick={() => store.getState().Algorithm.present.step_func()}>
                         <i className="material-icons left">redo</i>
+                    </span>
+                    :
+                    <span className="waves-effect btn" style={{ textTransform: 'none', float: 'right' }}
+                        onClick={() => store.getState().Algorithm.present.init_func()}>
+                        Reiniciar
+                        <i className="material-icons right">replay</i>
                     </span>
                 }
             </div>

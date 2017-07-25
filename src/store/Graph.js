@@ -146,7 +146,8 @@ const Graph = (state = {
                         from: state.vertexList[state.mouseDownId],
                         to: state.vertexList[action.id],
                         opositeEdge: state.edgeList.findIndex(e => e.from.id === action.id && e.to.id === state.mouseDownId) !== -1,
-                        weight: 1
+                        weight: 1,
+                        capacity: 0
                     }]
                 };
 
@@ -161,7 +162,7 @@ const Graph = (state = {
                 ...state,
                 vertexList: [...state.vertexList, {
                     id: state.vertexList.length,
-                    label: state.vertexList.length,
+                    label: state.vertexList.length + 1,
                     x: action.x,
                     y: action.y,
                     selected: false

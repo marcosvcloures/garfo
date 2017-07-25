@@ -18,14 +18,14 @@ class App extends Component {
         setTimeout(() => window.$('.container').addClass('appear'), 10)
         setTimeout(() => window.$('.breadcrumb').addClass('appear'), 10)
 
-        window.onpopstate = e => store.dispatch(e.state);
+        window.onpopstate = e => store.dispatch(e.state)
     }
 
     componentWillUnmount() {
         this.unsubscribe();
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate() {
         let nextState = { id: store.getState().Page.id, type: 'SET_PAGE' }
 
         if (window.history.state.id !== nextState.id)

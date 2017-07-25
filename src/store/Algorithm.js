@@ -4,8 +4,6 @@ const Algorithm = (state = { edgeList: [], vertexList: [], playing: false, speed
             return { ...state, playing: !state.playing, step: null };
         case 'SPEED_CHANGE':
             return { ...state, speed: action.value };
-        case 'VERTEX_CLICK':
-            return { ...state, clicked_vertex: action.id };
         case 'ALGORITHM_INIT':
             return {
                 edgeList: action.edgeList, vertexList: action.vertexList, playing: false,
@@ -20,8 +18,7 @@ const Algorithm = (state = { edgeList: [], vertexList: [], playing: false, speed
             };
         case 'ALGORITHM_FINISH':
             return {
-                ...state, edgeList: action.edgeList, vertexList: action.vertexList, playing: false,
-                finished: true
+                ...state, playing: false, finished: true
             };
         default:
             return state;

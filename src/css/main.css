@@ -56,17 +56,19 @@ nav {
 svg text {
     pointer-events: none;
     touch-action: none;
+    user-select: none;
 }
 
 svg circle {
     touch-action: none;
+    user-select: none;
+    cursor: pointer;
 }
 
-.modal {
-    display: block;
-    z-index: 1000;
-    transition: all 0.5s;
-    opacity: 0;
+svg path line {
+    touch-action: none;
+    user-select: none;
+    cursor: pointer;
 }
 
 .breadcrumb {

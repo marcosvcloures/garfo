@@ -97,7 +97,7 @@ const Edge = (id, from, to, weight, oposite) => {
     const WeightedEdges = store.getState().Graph.present.weightedEdges;
     let x, y, loop;
 
-    if(from === to)
+    if (from === to)
         loop = true;
     else
         loop = false;
@@ -334,55 +334,58 @@ const ControlsEdit = () => {
 }
 
 class VertexProps extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { label: store.getState().Graph.present.vertexSelected.label };
-    }
+    state = null
 
-    componentDidMount() {
-        setTimeout((e) => { ReactDOM.findDOMNode(this).style.opacity = 1 });
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.vertex !== null && this.state === null)
+            this.setState(this.props.vertex)
     }
 
     handleKeyPress = (e) => {
-        if (e.key === 'Enter')
+        if (e.key === 'Enter') {
             this.save();
+        
+            window.$('#vertexEdit').modal('close')
+        }
     }
 
     save = (e) => {
         ReactDOM.findDOMNode(this).style.opacity = 0;
 
-        setTimeout((p) => {
-            store.dispatch({
-                type: 'SAVE_VERTEX',
-                from: 'GRAPH',
-                label: this.state.label
-            })
-        }, 500);
+        store.dispatch({
+            type: 'SAVE_VERTEX',
+            from: 'GRAPH',
+            label: this.state.label
+        })
+
+        this.state = null
     }
 
     cancel = (e) => {
         ReactDOM.findDOMNode(this).style.opacity = 0;
 
-        setTimeout((p) => {
-            store.dispatch({
-                type: 'SAVE_VERTEX',
-                from: 'GRAPH',
-                label: store.getState().Graph.present.vertexSelected.label
-            })
-        }, 500)
+        store.dispatch({
+            type: 'SAVE_VERTEX',
+            from: 'GRAPH',
+            label: store.getState().Graph.present.vertexSelected.label
+        })
+
+        this.state = null
     }
 
     render() {
-        return <div className="modal">
+        return <div className="modal" id="vertexEdit">
             <div className="modal-content">
                 <h4>Editar vértice</h4>
                 <div className="row">
                     <div className="input-field col s12">
-                        <input id="vertexLabel" type="text"
-                            value={this.state.label}
-                            autoFocus
-                            onKeyPress={this.handleKeyPress}
-                            onChange={(e) => this.setState({ label: e.target.value })} />
+                        {this.state &&
+                            <input id="vertexLabel" type="text"
+                                value={this.state.label || ""}
+                                autoFocus
+                                onKeyPress={this.handleKeyPress}
+                                onChange={(e) => this.setState({ label: e.target.value })} />
+                        }
                         <label htmlFor="vertexLabel">Nome do vértice</label>
                     </div>
                 </div>
@@ -407,70 +410,72 @@ class VertexProps extends Component {
 }
 
 class EdgeProps extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            weight: store.getState().Graph.present.edgeSelected.weight,
-            capacity: store.getState().Graph.present.edgeSelected.capacity
-        };
-    }
+    state = null
 
-    componentDidMount() {
-        setTimeout((e) => { ReactDOM.findDOMNode(this).style.opacity = 1 });
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.edge !== null && this.state === null)
+            this.setState(this.props.edge)
     }
 
     handleKeyPress = (e) => {
-        if (e.key === 'Enter')
+        if (e.key === 'Enter') {
             this.save();
+
+            window.$('#edgeEdit').modal('close')
+        }
     }
 
     save = (e) => {
         ReactDOM.findDOMNode(this).style.opacity = 0;
 
-        setTimeout((p) => {
-            store.dispatch({
-                type: 'SAVE_EDGE',
-                from: 'GRAPH',
-                weight: !isNaN(parseInt(this.state.weight, 10)) ? parseInt(this.state.weight, 10) : 0,
-                capacity: this.state.capacity
-            })
-        }, 500);
+        store.dispatch({
+            type: 'SAVE_EDGE',
+            from: 'GRAPH',
+            weight: !isNaN(parseInt(this.state.weight, 10)) ? parseInt(this.state.weight, 10) : 0,
+            capacity: !isNaN(parseInt(this.state.capacity, 10)) ? parseInt(this.state.capacity, 10) : 0
+        })
+
+        this.state = null
     }
 
     cancel = (e) => {
         ReactDOM.findDOMNode(this).style.opacity = 0;
 
-        setTimeout((p) => {
-            store.dispatch({
-                type: 'SAVE_EDGE',
-                from: 'GRAPH',
-                weight: store.getState().Graph.present.edgeSelected.weight,
-                capacity: store.getState().Graph.present.edgeSelected.capacity
-            })
-        }, 500)
+        store.dispatch({
+            type: 'SAVE_EDGE',
+            from: 'GRAPH',
+            weight: store.getState().Graph.present.edgeSelected.weight,
+            capacity: store.getState().Graph.present.edgeSelected.capacity
+        })
+
+        this.state = null
     }
 
     render() {
-        return <div className="modal">
+        return <div id="edgeEdit" className="modal">
             <div className="modal-content">
                 <h4>Editar aresta</h4>
                 <div className="row">
                     <div className="input-field col s12">
-                        <input id="edgeWeight" type="number"
-                            autoFocus
-                            value={this.state.weight}
-                            onKeyPress={this.handleKeyPress}
-                            onChange={(e) =>
-                                this.setState({ weight: !isNaN(parseInt(e.target.value, 10)) ? parseInt(e.target.value, 10) : null })
-                            } />
+                        {this.state &&
+                            <input id="edgeWeight" type="number"
+                                autoFocus
+                                value={this.state.weight || ""}
+                                onKeyPress={this.handleKeyPress}
+                                onChange={e =>
+                                    this.setState({ weight: !isNaN(parseInt(e.target.value, 10)) ? parseInt(e.target.value, 10) : null })
+                                } />
+                        }
                         <label htmlFor="edgeWeight">Peso</label>
                     </div>
                     <div className="input-field col s12">
-                        <input id="edgeCapacity" type="number"
-                            value={this.state.capacity}
-                            onKeyPress={this.handleKeyPress}
-                            onChange={(e) => this.setState({ capacity: e.target.value })} />
-                        <label htmlFor="edgeCapacity">Capacidade</label>
+                        {this.state &&
+                            <input id="edgeCapacity" type="number"
+                                value={this.state.capacity || ""}
+                                onKeyPress={this.handleKeyPress}
+                                onChange={e => this.setState({ capacity: !isNaN(parseInt(e.target.value, 10)) ? parseInt(e.target.value, 10) : null })} />
+                        }
+                        <label htmlFor="edgeCapacity" className="active">Capacidade</label>
                     </div>
                 </div>
             </div>
@@ -526,9 +531,12 @@ const keyHandler = (e) => {
 
 class GraphEdit extends Component {
     componentDidMount() {
-        this.unsubscribe = store.subscribe(() =>
+        this.unsubscribe = store.subscribe(() => {
+            if (store.getState().Action.type === 'SET_PAGE')
+                return;
+
             this.forceUpdate()
-        );
+        });
 
         window.$(".button-collapse").sideNav({
             menuWidth: 250,
@@ -536,6 +544,8 @@ class GraphEdit extends Component {
             closeOnClick: true,
             draggable: true
         });
+
+        window.$('.modal').modal()
 
         document.addEventListener("keydown", keyHandler);
     }
@@ -546,11 +556,20 @@ class GraphEdit extends Component {
         this.unsubscribe();
     }
 
-    render() {
+    componentWillUpdate() {
         const graphState = store.getState().Graph.present;
 
         const vertexEditing = graphState.vertexSelected !== null;
         const edgeEditing = graphState.edgeSelected !== null;
+
+        if (vertexEditing)
+            window.$('#vertexEdit').modal('open');
+        else if (edgeEditing)
+            window.$('#edgeEdit').modal('open');
+    }
+
+    render() {
+        const graphState = store.getState().Graph.present;
 
         return <div className="container">
             <div className="col side-nav" id="right-menu">
@@ -565,8 +584,8 @@ class GraphEdit extends Component {
                 {Graph()}
             </div>
 
-            {vertexEditing && <VertexProps key={0} />}
-            {edgeEditing && <EdgeProps key={1} />}
+            <VertexProps vertex={graphState.vertexSelected} />
+            <EdgeProps edge={graphState.edgeSelected} />
 
             <div className="col s12 m12 l9 offset-l3" style={{ top: "-10px", position: "relative" }}>
                 {store.getState().Graph.past.length > 0 &&
