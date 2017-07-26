@@ -15,11 +15,13 @@
     "typeface-josefin-sans": "0.0.22"
   },
   "devDependencies": {
+    "gh-pages": "^1.0.0",
     "react-scripts": "1.0.7"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rd /s /q docs && robocopy build docs /e",
+    "build": "react-scripts build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }

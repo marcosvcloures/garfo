@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+import './helper/easterEgg.js';
+
 import './css/materialize.css';
 import 'materialize-css/bin/materialize.js';
 

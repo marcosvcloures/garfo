@@ -3,6 +3,11 @@ import store from './store/index.js';
 
 class App extends Component {
     componentWillMount() {
+        if(window.location.hash.toUpperCase() === '#PLZ')
+            document.body.ovoDePascoa1()
+        else if(window.location.hash.toUpperCase() === '#42')
+            document.body.ovoDePascoa2()
+
         let nextState = { id: store.getState().Page.id, type: 'SET_PAGE' };
 
         window.history.replaceState(nextState, "Garfo - " + store.getState().Page.name,
@@ -20,7 +25,7 @@ class App extends Component {
         setTimeout(() => window.$('.container').addClass('appear'), 10)
         setTimeout(() => window.$('.breadcrumb').addClass('appear'), 10)
 
-        window.onpopstate = e => store.dispatch(e.state)
+        window.onpopstate = e => e.state && store.dispatch(e.state)
     }
 
     componentWillUnmount() {
