@@ -562,6 +562,21 @@ class GraphEdit extends Component {
         window.$('#edgeEdit').modal({
             dismissible: false
         })
+        
+        window.document.querySelectorAll('line, path').forEach(e => {
+            e.style.strokeDasharray = e.getTotalLength();
+            e.style.strokeDashoffset = e.getTotalLength();
+        })
+
+        setTimeout(() => window.document.querySelectorAll('line, path').forEach(e => {
+            e.style.strokeDashoffset = 0;
+            e.style.removeProperty('markerEnd');
+            e.style.transition = "all 1s";
+        }), 100);
+
+        setTimeout(() => window.document.querySelectorAll('line, path').forEach(e => {
+            e.style.removeProperty('markerEnd');
+        }), 800); 
 
         document.addEventListener("keydown", keyHandler);
     }
@@ -591,11 +606,7 @@ class GraphEdit extends Component {
             <div className="col side-nav" id="right-menu">
                 {ControlsEdit()}
             </div>
-
-            <div className="side-menu-xl">
-                {ControlsEdit()}
-            </div>
-
+            
             <div className="col s12 full-height">
                 {Graph()}
             </div>

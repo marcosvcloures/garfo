@@ -190,6 +190,10 @@ class Algorithm extends Component {
         SPEED = null;
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        
+    }
+
     componentDidMount() {
         document.addEventListener("keydown", keyHandler);
 
@@ -199,6 +203,15 @@ class Algorithm extends Component {
             closeOnClick: true,
             draggable: true
         });
+
+        window.document.querySelectorAll('line, path').forEach(e => {
+            e.style.stroke = "black";
+        })
+
+        setTimeout(() => window.document.querySelectorAll('line, path').forEach(e => {
+            e.style.removeProperty('stroke');
+            e.style.transition = "stroke 1s, stroke-dasharray 0.2s";
+        }), 100);
 
         this.unsubscribe = store.subscribe(() => {
             if (store.getState().Action.type === 'SET_PAGE')
@@ -243,10 +256,6 @@ class Algorithm extends Component {
     render() {
         return <div className="container">
             <div className="col side-nav" id="right-menu">
-                {Controls()}
-            </div>
-
-            <div className="side-menu-xl">
                 {Controls()}
             </div>
 
