@@ -117,5 +117,5 @@ svg path line {
 }
 
 circle, text {
-    transition: all 1s;
+    transition: stroke 1s, color 1s;
 }
