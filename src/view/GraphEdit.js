@@ -585,6 +585,7 @@ class GraphEdit extends Component {
 
         setTimeout(() => window.document.querySelectorAll('line, path').forEach(e => {
             e.style.removeProperty('marker-end');
+            e.style.removeProperty('stroke-dasharray');
         }), 700);
 
         document.addEventListener("keydown", keyHandler);
