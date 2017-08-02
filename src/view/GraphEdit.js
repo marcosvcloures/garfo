@@ -215,85 +215,94 @@ const EdgeEdit = (from, to) => {
     );
 }
 
-const Graph = () => {
-    const graphState = store.getState().Graph.present;
-    const VertexList = graphState.vertexList;
-    const EdgeList = graphState.edgeList;
+class Graph extends Component {
+    componentDidMount() {
+        this.node = ReactDOM.findDOMNode(this)
+        this.offset = this.node.getBoundingClientRect();
+    }
 
-    return <svg className="z-depth-1 graph-edit"
-        onClick={(e) => {
-            e.preventDefault();
+    componentDidUpdate(prevProps, prevState) {
+        this.offset = this.node.getBoundingClientRect();
+    }
 
-            store.dispatch({
-                type: 'CLICK_SVG',
-                from: 'GRAPH',
-                x: e.nativeEvent.offsetX,
-                y: e.nativeEvent.offsetY
-            })
-        }}
+    render() {
+        const graphState = store.getState().Graph.present;
+        const VertexList = graphState.vertexList;
+        const EdgeList = graphState.edgeList;
 
-        onTouchMove={(e) => {
-            if (store.getState().ControlsEdit.action === 'ADD' || store.getState().ControlsEdit.action === 'MOVE') {
-                const offset = e.target.parentElement.parentElement.getBoundingClientRect();
-
-                this.mouseX = e.nativeEvent.touches[0].clientX - offset.left;
-                this.mouseY = e.nativeEvent.touches[0].clientY - offset.top;
+        return <svg className="z-depth-1 graph-edit"
+            onMouseUp={e => {
+                e.preventDefault();
 
                 store.dispatch({
-                    type: 'MOUSE_MOVE',
-                    from: 'GRAPH',
-                    x: this.mouseX,
-                    y: this.mouseY
-                });
-            }
-        }}
-
-        onMouseMove={(e) => {
-            e.preventDefault();
-
-            if (store.getState().ControlsEdit.action === 'ADD' || store.getState().ControlsEdit.action === 'MOVE') {
-                this.mouseX = e.nativeEvent.offsetX;
-                this.mouseY = e.nativeEvent.offsetY;
-
-                store.dispatch({
-                    type: 'MOUSE_MOVE',
+                    type: 'MOUSE_UP_SVG',
                     from: 'GRAPH',
                     x: e.nativeEvent.offsetX,
                     y: e.nativeEvent.offsetY
-                });
-            }
-        }}>
+                })
+            }}
 
-        <defs>
-            <marker id="arrow"
-                markerWidth="30"
-                markerHeight="30"
-                refX="15"
-                refY="3"
-                orient="auto"
-                markerUnits="userSpaceOnUse"
-                viewBox="0 0 15 15">
-                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="context-stroke" />
-            </marker>
-            <marker id="arrowEdit"
-                markerWidth="10"
-                markerHeight="10"
-                refX="2"
-                refY="3"
-                orient="auto"
-                markerUnits="strokeWidth"
-                viewBox="0 0 15 15">
-                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="context-stroke" />
-            </marker>
-        </defs>
+            onTouchMove={(e) => {
+                if (store.getState().ControlsEdit.action === 'ADD' || store.getState().ControlsEdit.action === 'MOVE') {
+                    this.mouseX = e.nativeEvent.touches[0].clientX - this.offset.left;
+                    this.mouseY = e.nativeEvent.touches[0].clientY - this.offset.top;
 
-        {graphState.mouseDownVertex === true && store.getState().ControlsEdit.action === 'ADD' &&
-            EdgeEdit(VertexList.find(e => { return e.id === graphState.mouseDownId }),
-                { x: this.mouseX, y: this.mouseY })}
+                    store.dispatch({
+                        type: 'MOUSE_MOVE',
+                        from: 'GRAPH',
+                        x: this.mouseX,
+                        y: this.mouseY
+                    });
+                }
+            }}
 
-        {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight, e.opositeEdge))}
-        {VertexList.map(e => Vertex(e.id, e.x, e.y, e.label))}
-    </svg>;
+            onMouseMove={(e) => {
+                e.preventDefault();
+
+                if (store.getState().ControlsEdit.action === 'ADD' || store.getState().ControlsEdit.action === 'MOVE') {
+                    this.mouseX = e.nativeEvent.clientX - this.offset.left;
+                    this.mouseY = e.nativeEvent.clientY - this.offset.top;
+
+                    store.dispatch({
+                        type: 'MOUSE_MOVE',
+                        from: 'GRAPH',
+                        x: this.mouseX,
+                        y: this.mouseY
+                    });
+                }
+            }}>
+
+            <defs>
+                <marker id="arrow"
+                    markerWidth="30"
+                    markerHeight="30"
+                    refX="15"
+                    refY="3"
+                    orient="auto"
+                    markerUnits="userSpaceOnUse"
+                    viewBox="0 0 15 15">
+                    <path d="M0,0 L2,3 L0,6 L9,3 z" />
+                </marker>
+                <marker id="arrowEdit"
+                    markerWidth="10"
+                    markerHeight="10"
+                    refX="2"
+                    refY="3"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                    viewBox="0 0 15 15">
+                    <path d="M0,0 L2,3 L0,6 L9,3 z" />
+                </marker>
+            </defs>
+
+            {graphState.mouseDownVertex === true && store.getState().ControlsEdit.action === 'ADD' &&
+                EdgeEdit(VertexList[graphState.mouseDownId],
+                    { x: this.mouseX, y: this.mouseY })}
+
+            {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight, e.opositeEdge))}
+            {VertexList.map(e => Vertex(e.id, e.x, e.y, e.label))}
+        </svg>;
+    }
 }
 
 const Button = (text, value) => {
@@ -562,7 +571,7 @@ class GraphEdit extends Component {
         window.$('#edgeEdit').modal({
             dismissible: false
         })
-        
+
         window.document.querySelectorAll('line, path').forEach(e => {
             e.style.strokeDasharray = e.getTotalLength();
             e.style.strokeDashoffset = e.getTotalLength();
@@ -570,13 +579,13 @@ class GraphEdit extends Component {
 
         setTimeout(() => window.document.querySelectorAll('line, path').forEach(e => {
             e.style.strokeDashoffset = 0;
-            e.style.removeProperty('markerEnd');
+            e.style.markerEnd = "none";
             e.style.transition = "all 1s";
-        }), 100);
+        }), 0);
 
         setTimeout(() => window.document.querySelectorAll('line, path').forEach(e => {
-            e.style.removeProperty('markerEnd');
-        }), 800); 
+            e.style.removeProperty('marker-end');
+        }), 700);
 
         document.addEventListener("keydown", keyHandler);
     }
@@ -606,9 +615,9 @@ class GraphEdit extends Component {
             <div className="col side-nav" id="right-menu">
                 {ControlsEdit()}
             </div>
-            
+
             <div className="col s12 full-height">
-                {Graph()}
+                <Graph />
             </div>
 
             <VertexProps vertex={graphState.vertexSelected} />

@@ -165,7 +165,7 @@ const Graph = () => {
                 orient="auto"
                 markerUnits="userSpaceOnUse"
                 viewBox="0 0 15 15">
-                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="context-stroke" />
+                <path d="M0,0 L2,3 L0,6 L9,3 z" />
             </marker>
             <marker id="arrowEdit"
                 markerWidth="10"
@@ -175,7 +175,7 @@ const Graph = () => {
                 orient="auto"
                 markerUnits="strokeWidth"
                 viewBox="0 0 15 15">
-                <path d="M0,0 L2,3 L0,6 L9,3 z" fill="context-stroke" />
+                <path d="M0,0 L2,3 L0,6 L9,3 z" />
             </marker>
         </defs>
 

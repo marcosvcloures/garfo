@@ -159,7 +159,7 @@ const Graph = (state = {
             }
 
             return state;
-        case 'CLICK_SVG':
+        case 'MOUSE_UP_SVG':
             if (controlsState !== 'ADD' || state.mouseDownVertex === true)
                 return { ...state, mouseDownVertex: false };
 

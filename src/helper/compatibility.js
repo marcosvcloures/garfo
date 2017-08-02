@@ -15,6 +15,7 @@ if (!SVGLineElement.prototype.getTotalLength) {
 }
 
 if (!Array.prototype.find) {
+    // eslint-disable-next-line
     Array.prototype.find = function (predicate) {
         if (this === null) {
             throw new TypeError('Array.prototype.find called on null or undefined');
@@ -38,6 +39,7 @@ if (!Array.prototype.find) {
 }
 
 if (!Array.prototype.findIndex) {
+    // eslint-disable-next-line
     Array.prototype.findIndex = function (predicate) {
         if (this === null) {
             throw new TypeError('Array.prototype.findIndex called on null or undefined');
