@@ -12,8 +12,6 @@ class Modal extends React.Component {
     componentDidMount() {
         document.addEventListener("keydown", this.handleKeyPress);
 
-        console.log(this.handleKeyPress);
-
         window.$('#modalDijkstra').modal({
             dismissible: false
         })

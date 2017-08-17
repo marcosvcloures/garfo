@@ -546,6 +546,10 @@ const keyHandler = (e) => {
             type: "DELETE",
             from: "CONTROLS_EDIT"
         });
+    if (e.keyCode === 77 || e.keyCode === 9) {
+        e.preventDefault()
+        return window.$('.button-collapse').click()
+    }
 }
 
 class GraphEdit extends Component {

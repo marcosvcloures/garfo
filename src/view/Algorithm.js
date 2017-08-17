@@ -26,6 +26,10 @@ const keyHandler = (e) => {
             type: 'SPEED_CHANGE',
             value: 10
         });
+    if(e.keyCode === 77 || e.keyCode === 9) {
+        e.preventDefault()
+        return window.$('.button-collapse').click()
+    }
 }
 
 const Vertex = (vertex) => {
