@@ -10,9 +10,25 @@ let adjList;
 
 class Modal extends React.Component {
     componentDidMount() {
+        document.addEventListener("keydown", this.handleKeyPress);
+
+        console.log(this.handleKeyPress);
+
         window.$('#modalDijkstra').modal({
-            dismissible: true
+            dismissible: false
         })
+    }
+
+    handleKeyPress = (e) => {
+        if (e.keyCode === 13) {
+            window.$('#modalDijkstra').modal('close')
+
+            store.getState().Algorithm.present.init_func()
+        }
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.handleKeyPress)
     }
 
     render() {
@@ -25,9 +41,12 @@ class Modal extends React.Component {
                 </div>
             </div>
             <div className="modal-footer center-align">
-                <button className="waves-effect waves-blue btn-flat modal-action modal-close">
+                <button className="waves-effect waves-blue btn-flat modal-action modal-close" onClick={() => {
+                    window.$('#modalDijkstra').modal('close')
+                    store.getState().Algorithm.present.init_func()
+                }}>
                     Entendi!
-                    </button>
+                </button>
             </div>
         </div>;
     }
@@ -67,7 +86,7 @@ const Step = () => {
         window.queue = queue
         window.visited = visited
 
-        if(queue.length === 0) {
+        if (queue.length === 0) {
             Finished();
             return;
         }
@@ -75,35 +94,35 @@ const Step = () => {
         const atual = queue[0];
 
         const edgeList = present.edgeList.map(e => {
-            if(e.id === atual.edge)
-                return {...e, color: "black", strokeDash: "0"}
+            if (e.id === atual.edge)
+                return { ...e, color: "black", strokeDash: "0" }
             return e
         })
 
         visited[atual.id] = true
 
-        for(let e of adjList[atual.id])
-            if(!visited[e.to])
-               queue.push({ id: e.to, cost: e.cost + atual.cost, edge: e.id })
+        for (let e of adjList[atual.id])
+            if (!visited[e.to])
+                queue.push({ id: e.to, cost: e.cost + atual.cost, edge: e.id })
 
         queue.sort((a, b) => a.cost - b.cost)
 
         const vertexList = present.vertexList.map(e => {
-            if(e.id === present.vars.source) 
-                return {...e, color: "darkorange"}
-            else if(e.id === atual.id)
-                return {...e, color: "black", helperText: String(atual.cost)}
-            else if(!visited[e.id] && queue.find(p => p.id === e.id)) {
-                return {...e, helperText: queue.find(p => p.id === e.id).cost}
+            if (e.id === present.vars.source)
+                return { ...e, color: "darkorange" }
+            else if (e.id === atual.id)
+                return { ...e, color: "black", helperText: String(atual.cost) }
+            else if (!visited[e.id] && queue.find(p => p.id === e.id)) {
+                return { ...e, helperText: queue.find(p => p.id === e.id).cost }
             }
             return e
         })
 
         store.dispatch({
             type: 'ALGORITHM_STEP',
-            vertexList: vertexList, 
+            vertexList: vertexList,
             edgeList: edgeList,
-            vars: {...present.vars, visited: visited, queue: queue}
+            vars: { ...present.vars, visited: visited, queue: queue }
         })
     }
     else {

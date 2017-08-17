@@ -4,6 +4,28 @@ import store from "../store/index.js";
 let MAIN_LOOP = null, SPEED = null;
 
 const keyHandler = (e) => {
+    if (e.keyCode === 76 || e.keyCode === 39)
+        return store.getState().Algorithm.present.step_func()
+    if (e.keyCode === 74 || e.keyCode === 37)
+        return store.dispatch({ type: 'UNDO_ALGORITHM' })
+    if (e.keyCode === 75 || e.keyCode === 32) {
+        if (store.getState().Algorithm.present.finished)
+            return store.getState().Algorithm.present.init_func()
+
+        return store.dispatch({ type: 'PLAY_PAUSE' })
+    }
+    if (e.keyCode === 82)
+        return store.getState().Algorithm.present.init_func()
+    if (e.keyCode >= 49 && e.keyCode <= 57)
+        return store.dispatch({
+            type: 'SPEED_CHANGE',
+            value: e.keyCode - 48
+        });
+    if (e.keyCode === 48)
+        return store.dispatch({
+            type: 'SPEED_CHANGE',
+            value: 10
+        });
 }
 
 const Vertex = (vertex) => {
@@ -128,26 +150,31 @@ const Controls = () => {
         }
 
         {!store.getState().Algorithm.present.finished &&
-            <span className="waves-effect btn" onClick={() => store.getState().Algorithm.present.step_func()}>
-                Passo a frente <i className="material-icons left">redo</i>
-            </span>
-        }
-
-        {store.getState().Algorithm.past.length > 0 &&
-            <span className="waves-effect btn" onClick={() => store.dispatch({ type: 'UNDO_ALGORITHM' })}>
-                Passo atrás <i className="material-icons left">undo</i>
-            </span>
-        }
-
-        <p className="range-field">
-            <input type="range" id="speed" min="1" max="5" value={store.getState().Algorithm.present.speed} onChange={(e) =>
+            <a className="waves-effect btn" onClick={() => {
                 store.dispatch({
                     type: 'SPEED_CHANGE',
-                    value: e.target.value
+                    value: 2000
                 })
-            } />
-            <label htmlFor="speed">Velocidade: {store.getState().Algorithm.present.speed}</label>
-        </p>
+
+                store.dispatch({
+                    type: 'PLAY_PAUSE'
+                })
+            }}>
+                Terminar <i className="material-icons left">fast_forward</i>
+            </a>
+        }
+
+        {!store.getState().Algorithm.present.finished &&
+            <p className="range-field">
+                <input type="range" id="speed" min="1" max="10" value={store.getState().Algorithm.present.speed} onChange={(e) =>
+                    store.dispatch({
+                        type: 'SPEED_CHANGE',
+                        value: e.target.value
+                    })
+                } />
+                <label htmlFor="speed">Velocidade: {Math.min(store.getState().Algorithm.present.speed, 10)}</label>
+            </p>
+        }
     </div>;
 }
 
@@ -188,10 +215,6 @@ class Algorithm extends Component {
     componentWillMount() {
         MAIN_LOOP = null;
         SPEED = null;
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        
     }
 
     componentDidMount() {
