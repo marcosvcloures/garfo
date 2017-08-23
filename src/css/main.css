@@ -107,7 +107,7 @@ svg path line {
 
 .clear-graph {
     width: 227.5px;
-    bottom: 70px;
+    bottom: 10px;
     text-align: center;
     display: block;
     position: absolute;
@@ -124,7 +124,7 @@ circle, text {
 @media screen and (min-width: 1700px) {
     .side-nav {
         transform: translateX(0) !important;
-        top: 65px;
+        top: 5px;
         z-index: 1;
     }
 
