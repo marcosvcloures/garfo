@@ -2,6 +2,7 @@ html, body, #root, .App {
     height: 100%;
     margin: auto 0;
     padding: 0;
+    overflow: hidden;
 }
 
 .full-height {
@@ -124,17 +125,14 @@ circle, text {
 @media screen and (min-width: 1700px) {
     .side-nav {
         transform: translateX(0) !important;
-        top: 5px;
         z-index: 1;
     }
 
-    
-    .clear-graph {
-        bottom: 135px;
-    }
-
-     
     nav a.button-collapse {
         display: none;
+    }
+
+    nav .nav-wrapper{
+        left: 250px;
     }
 }
