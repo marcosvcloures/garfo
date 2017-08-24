@@ -228,6 +228,14 @@ class Algorithm extends Component {
             menuWidth: 250,
             edge: 'left',
             closeOnClick: true,
+            onOpen: () => {
+                window.$('nav').addClass('blurred')
+                window.$('div.col.s12').addClass('blurred')
+            },
+            onClose: () => {
+                window.$('nav').removeClass('blurred')
+                window.$('div.col.s12').removeClass('blurred')
+            },
             draggable: true
         });
 

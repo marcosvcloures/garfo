@@ -397,7 +397,7 @@ class VertexProps extends Component {
             <div className="modal-content">
                 <h4>Editar vértice</h4>
                 <div className="row">
-                    <div className="input-field col s12">
+                    <div className="input-field col m12">
                         {this.state &&
                             <input id="vertexLabel" type="text"
                                 value={this.state.label || ""}
@@ -475,7 +475,7 @@ class EdgeProps extends React.Component {
             <div className="modal-content">
                 <h4>Editar aresta</h4>
                 <div className="row">
-                    <div className="input-field col s12">
+                    <div className="input-field col m12">
                         {this.state &&
                             <input id="edgeWeight" type="number"
                                 autoFocus
@@ -487,7 +487,7 @@ class EdgeProps extends React.Component {
                         }
                         <label htmlFor="edgeWeight">Peso</label>
                     </div>
-                    <div className="input-field col s12">
+                    <div className="input-field col m12">
                         {this.state &&
                             <input id="edgeCapacity" type="number"
                                 value={this.state.capacity || ""}
@@ -565,6 +565,14 @@ class GraphEdit extends Component {
             menuWidth: 250,
             edge: 'left',
             closeOnClick: true,
+            onOpen: () => {
+                window.$('nav').addClass('blurred')
+                window.$('div.col.s12').addClass('blurred')
+            },
+            onClose: () => {
+                window.$('nav').removeClass('blurred')
+                window.$('div.col.s12').removeClass('blurred')
+            },
             draggable: true
         });
 
