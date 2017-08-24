@@ -26,7 +26,7 @@ const keyHandler = (e) => {
             type: 'SPEED_CHANGE',
             value: 10
         });
-    if(e.keyCode === 77 || e.keyCode === 9) {
+    if ((e.keyCode === 77 || e.keyCode === 9) && window.innerWidth < 1700) {
         e.preventDefault()
         return window.$('.button-collapse').click()
     }
@@ -235,6 +235,9 @@ class Algorithm extends Component {
             onClose: () => {
                 window.$('nav').removeClass('blurred')
                 window.$('div.col.s12').removeClass('blurred')
+
+                while (window.$('#sidenav-overlay').length)
+                    window.$('#sidenav-overlay').replaceWith('')
             },
             draggable: true
         });

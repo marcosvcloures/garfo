@@ -402,6 +402,7 @@ class VertexProps extends Component {
                             <input id="vertexLabel" type="text"
                                 value={this.state.label || ""}
                                 autoFocus
+                                onFocus={(e) => e.target.select()}
                                 onKeyPress={this.handleKeyPress}
                                 onChange={(e) => this.setState({ label: e.target.value })} />
                         }
@@ -480,6 +481,7 @@ class EdgeProps extends React.Component {
                             <input id="edgeWeight" type="number"
                                 autoFocus
                                 value={this.state.weight || ""}
+                                onFocus={(e) => e.target.select()}
                                 onKeyPress={this.handleKeyPress}
                                 onChange={e =>
                                     this.setState({ weight: !isNaN(parseInt(e.target.value, 10)) ? parseInt(e.target.value, 10) : null })
@@ -491,6 +493,7 @@ class EdgeProps extends React.Component {
                         {this.state &&
                             <input id="edgeCapacity" type="number"
                                 value={this.state.capacity || ""}
+                                onFocus={(e) => e.target.select()}
                                 onKeyPress={this.handleKeyPress}
                                 onChange={e => this.setState({ capacity: !isNaN(parseInt(e.target.value, 10)) ? parseInt(e.target.value, 10) : null })} />
                         }
@@ -546,7 +549,7 @@ const keyHandler = (e) => {
             type: "DELETE",
             from: "CONTROLS_EDIT"
         });
-    if (e.keyCode === 77 || e.keyCode === 9) {
+    if ((e.keyCode === 77 || e.keyCode === 9) && window.innerWidth < 1700) {
         e.preventDefault()
         return window.$('.button-collapse').click()
     }
@@ -572,6 +575,9 @@ class GraphEdit extends Component {
             onClose: () => {
                 window.$('nav').removeClass('blurred')
                 window.$('div.col.s12').removeClass('blurred')
+                
+                while(window.$('#sidenav-overlay').length)
+                    window.$('#sidenav-overlay').replaceWith('')
             },
             draggable: true
         });

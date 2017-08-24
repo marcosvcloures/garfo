@@ -128,19 +128,76 @@ circle, text {
 
 @media screen and (min-width: 1700px) {
     .side-nav {
+        position: absolute;
         transform: translateX(0) !important;
+        top: 65px;
         z-index: 1;
+        background-color: rgba(0, 0, 0, 0);
     }
 
     nav a.button-collapse {
         display: none;
     }
-
-    nav .nav-wrapper{
-        left: 250px;
-    }
 }
 
 .blurred {
     filter: blur(3px);
+}
+
+.search {
+    transition: all 0.5s;
+    position: absolute;
+    top: 10px;
+    text-align: left;
+    vertical-align: middle;
+    width: 36px !important;
+    height: 36px !important;
+    right: 10px;
+    border-radius: 50%;
+}
+
+.search:hover {
+    background: #fff;
+    cursor: pointer;
+}
+
+.search i {
+    transition: all 1s;
+    color: #fff;
+    vertical-align: middle;
+    text-align: center;
+    width: 100%;
+    line-height: 150%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.search i:hover {
+    color: #000;
+}
+
+.search.active {
+    width: 12em !important;
+    background: #fff;
+    border-radius: 1em;
+    padding: 0 1em;
+}
+
+.search.active input {
+    border: none !important;
+    height: 36px !important;
+}
+
+@media only screen and (min-width: 601px) {
+    .search {
+        top: 15px;
+        width: 36px !important;
+        height: 36px !important;
+        right: 15px;
+    }
+
+    .search.active input {
+        height: 36px !important;
+    }   
 }
