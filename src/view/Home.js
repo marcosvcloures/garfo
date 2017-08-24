@@ -6,7 +6,7 @@ class Item extends Component {
         let valid = false;
 
         for (let it in this.props)
-            if (it !== 'filter' && this.props[it].toLocaleLowerCase().lastIndexOf(this.props.filter.toLocaleLowerCase()) !== -1) {
+            if (it !== 'filter' && this.props[it].toLowerCase().lastIndexOf(this.props.filter.toLowerCase()) !== -1) {
                 valid = true
 
                 break

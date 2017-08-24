@@ -1,6 +1,6 @@
 import store from "./index.js";
 
-const Graph = (state = document.cookie !== null ?
+const Graph = (state = document.cookie ?
     {
         ...JSON.parse(document.cookie),
         vertexSelected: null, mouseDownVertex: false, edgeSelected: null
