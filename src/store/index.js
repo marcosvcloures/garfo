@@ -33,6 +33,8 @@ const reducers = combineReducers({
                 currentState.edgeList.length !== previousState.edgeList.length) {
                 previousState.mouseDownVertex = false;
 
+                document.cookie = JSON.stringify(currentState)
+
                 return true;
             }
 

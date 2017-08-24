@@ -1,9 +1,15 @@
 import store from "./index.js";
 
-const Graph = (state = {
-    vertexList: [], edgeList: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
-    directionalEdges: true, weightedEdges: true
-}, action) => {
+const Graph = (state = document.cookie !== null ?
+    {
+        ...JSON.parse(document.cookie),
+        vertexSelected: null, mouseDownVertex: false, edgeSelected: null
+    }
+    :
+    {
+        vertexList: [], edgeList: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
+        directionalEdges: true, weightedEdges: true
+    }, action) => {
     if (action.from !== 'GRAPH')
         return state;
 
