@@ -69,6 +69,7 @@ class App extends Component {
                         </div>
                     </div>
                 </nav>
+
                 {store.getState().Page.component}
 
                 <div id="newContent" className="modal bottom-sheet">

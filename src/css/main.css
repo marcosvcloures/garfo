@@ -7,6 +7,7 @@ html, body, #root, .App {
     margin: auto 0;
     padding: 0;
     overflow-x: hidden;
+    position: relative;
 }
 
 .full-height {
@@ -204,10 +205,37 @@ circle, text {
 }
 
 .nothing-found:before {
-    transition: all 1s;
     content: 'sentiment_dissatisfied'
 }
 
 .nothing-found:active:before {
     content: 'sentiment_very_satisfied'
+}
+
+.search.active ul {
+    position: absolute;
+    top: 20px;
+    background: #fff;
+    width: 12em !important;
+    right: 0;
+    margin: 0;
+    padding: 20px 0 5px 0;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.17), -1px 1px 1px rgba(0, 0, 0, 0.17);
+    border-radius: 5px;
+}
+
+.search.active ul li {
+    padding: 5px 10px;
+}
+
+.search.active ul li:hover {
+    padding: 5px 10px;
+    background-color: #26a69a;
+    color: #fff !important;
+}
+
+.search.active input {
+    position: absolute;
+    border: none !important;
+    box-shadow: none !important;
 }

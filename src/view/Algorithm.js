@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import store from "../store/index.js";
 
+import itens from '../helper/algorithmIndex'
+
 let MAIN_LOOP = null, SPEED = null;
 
 const keyHandler = (e) => {
@@ -293,6 +295,13 @@ class Algorithm extends Component {
 
     render() {
         return <div className="container">
+            <div className="search" onClick={() => store.dispatch({
+                type: 'SET_PAGE',
+                id: itens[0].id
+            })}>
+                <i className="material-icons">edit</i>
+            </div>
+
             <div className="col side-nav" id="right-menu">
                 {Controls()}
             </div>

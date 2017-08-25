@@ -2,6 +2,16 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import store from "../store/index.js";
 
+import itens from '../helper/algorithmIndex'
+
+const is_valid = (e, filter) => {
+    for (let it in e)
+        if (e[it].toLowerCase().lastIndexOf(filter.toLowerCase()) !== -1)
+            return true
+
+    return false
+}
+
 const Vertex = (id, posX, posY, text) => {
     return (
         <g
@@ -556,6 +566,8 @@ const keyHandler = (e) => {
 }
 
 class GraphEdit extends Component {
+    state = { searching: false, searchFor: '' }
+
     componentDidMount() {
         this.unsubscribe = store.subscribe(() => {
             if (store.getState().Action.type === 'SET_PAGE')
@@ -575,8 +587,8 @@ class GraphEdit extends Component {
             onClose: () => {
                 window.$('nav').removeClass('blurred')
                 window.$('div.col.s12').removeClass('blurred')
-                
-                while(window.$('#sidenav-overlay').length)
+
+                while (window.$('#sidenav-overlay').length)
                     window.$('#sidenav-overlay').replaceWith('')
             },
             draggable: true
@@ -632,6 +644,35 @@ class GraphEdit extends Component {
         const graphState = store.getState().Graph.present;
 
         return <div className="container">
+            <div className={"search " + (this.state.searching ? " active" : "")} onClick={() => this.setState({ searching: true })}>
+                {this.state.searching ?
+                    <div>
+                        {this.state.searchFor &&
+                            <ul>
+                                {itens.map((e, id) => id !== 0 && is_valid(e, this.state.searchFor) ?
+                                    <li key={id} onClick={p => {
+                                        store.dispatch({
+                                            type: 'SET_PAGE',
+                                            id: e.id
+                                        })
+                                    }}>
+                                        {e.name}
+                                    </li>
+                                    :
+                                    null)}
+                            </ul>
+                        }
+                        <input type="text" placeholder="Pesquisar..." autoFocus
+                            onFocus={e => e.target.select()}
+                            onBlur={e => e.target.value === '' && this.setState({ searching: false })}
+                            value={this.state.searchFor}
+                            onChange={e => this.setState({ searchFor: e.target.value })} />
+                    </div>
+                    :
+                    <i className="material-icons">search</i>
+                }
+            </div>
+
             <div className="col side-nav" id="right-menu">
                 {ControlsEdit()}
             </div>
