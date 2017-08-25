@@ -14,7 +14,7 @@ const reducers = combineReducers({
         undoType: 'UNDO_ALGORITHM',
         initTypes: 'ALGORITHM_INIT',
         filter: (action, currentState, previousState) => {
-            if(previousState === undefined)
+            if (previousState === undefined)
                 return false;
 
             previousState.playing = false;
@@ -33,7 +33,16 @@ const reducers = combineReducers({
                 currentState.edgeList.length !== previousState.edgeList.length) {
                 previousState.mouseDownVertex = false;
 
-                document.cookie = JSON.stringify(currentState)
+                document.cookie = JSON.stringify({
+                    ...currentState,
+                    edgeList: currentState.edgeList.map(e => {
+                        return {
+                            ...e,
+                            to: e.to.id,
+                            from: e.from.id
+                        }
+                    })
+                })
 
                 return true;
             }

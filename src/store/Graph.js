@@ -1,8 +1,15 @@
 import store from "./index.js";
 
-const Graph = (state = document.cookie ?
+const cookie = document.cookie ? JSON.parse(document.cookie) : null
+
+const Graph = (state = cookie ?
     {
-        ...JSON.parse(document.cookie),
+        ...cookie,
+        edgeList: cookie.edgeList.map(e => { return {
+            ...e,
+            from: cookie.vertexList[e.from],
+            to: cookie.vertexList[e.to],
+        } }), 
         vertexSelected: null, mouseDownVertex: false, edgeSelected: null
     }
     :

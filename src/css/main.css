@@ -201,3 +201,12 @@ circle, text {
         height: 36px !important;
     }   
 }
+
+.nothing-found:before {
+    transition: all 1s;
+    content: 'sentiment_dissatisfied'
+}
+
+.nothing-found:active:before {
+    content: 'sentiment_very_satisfied'
+}
