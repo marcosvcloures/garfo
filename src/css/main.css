@@ -6,7 +6,7 @@ html, body, #root, .App {
     height: 100%;
     margin: auto 0;
     padding: 0;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .full-height {
