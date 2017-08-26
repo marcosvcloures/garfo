@@ -54,8 +54,10 @@ class App extends Component {
                             <a className="breadcrumb" onClick={(e) => {
                                 e.preventDefault();
 
-                                if (store.getState().Page.id !== 'Home')
-                                    window.history.back();
+                                store.dispatch({
+                                    type: 'SET_PAGE',
+                                    id: 'Home'
+                                })
                             }}>
                                 Garfo
                             </a>
