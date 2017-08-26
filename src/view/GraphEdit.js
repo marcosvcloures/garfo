@@ -532,8 +532,7 @@ class EdgeProps extends React.Component {
 
 const keyHandlerSearch = (e) => {
     if (e.keyCode === 9)
-        e.preventDefault()
-    
+        return e.preventDefault()
 }
 
 const keyHandler = (e) => {
@@ -565,7 +564,7 @@ const keyHandler = (e) => {
             type: "DELETE",
             from: "CONTROLS_EDIT"
         });
-    if ((e.keyCode === 77 || e.keyCode === 9) && window.innerWidth < 1700) {
+    if (e.keyCode === 9 && window.innerWidth < 1700) {
         e.preventDefault()
         return window.$('.button-collapse').click()
     }
@@ -657,10 +656,14 @@ class GraphEdit extends Component {
         const graphState = store.getState().Graph.present;
 
         if(this.state.searching) {
+            console.log('we')
             document.removeEventListener("keydown", keyHandler)
             document.addEventListener("keydown", keyHandlerSearch)
         }
         else {
+            console.log('====================================');
+            console.log('wa');
+            console.log('====================================');
             document.removeEventListener("keydown", keyHandlerSearch)
             document.addEventListener("keydown", keyHandler)
         }

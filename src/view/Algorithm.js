@@ -28,7 +28,7 @@ const keyHandler = (e) => {
             type: 'SPEED_CHANGE',
             value: 10
         });
-    if ((e.keyCode === 77 || e.keyCode === 9) && window.innerWidth < 1700) {
+    if (e.keyCode === 9 && window.innerWidth < 1700) {
         e.preventDefault()
         return window.$('.button-collapse').click()
     }
