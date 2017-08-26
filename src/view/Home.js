@@ -12,7 +12,7 @@ const is_valid = (e, filter) => {
 }
 
 const keyHandler = (e) => {
-   if ((e.keyCode === 77 || e.keyCode === 9) && window.innerWidth < 1700) {
+   if (e.keyCode === 9 && window.innerWidth < 1700) {
         e.preventDefault()
         return window.$('.button-collapse').click()
     }
@@ -51,7 +51,7 @@ class Home extends Component {
     }
 
     componentWillUnmount() {
-        document.addEventListener('keydown', keyHandler)
+        document.removeEventListener('keydown', keyHandler)
     }
 
     render() {

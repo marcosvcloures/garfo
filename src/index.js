@@ -15,7 +15,5 @@ import 'typeface-josefin-sans';
 
 import './css/main.css';
 
-window.$.fn.velocity = window.$.Velocity = window.Velocity;
-
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
