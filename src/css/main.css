@@ -228,7 +228,7 @@ circle, text {
     padding: 5px 10px;
 }
 
-.search.active ul li:hover {
+.search.active ul li:hover, .search.active ul li.selected{
     padding: 5px 10px;
     background-color: #26a69a;
     color: #fff !important;

@@ -530,6 +530,12 @@ class EdgeProps extends React.Component {
     }
 }
 
+const keyHandlerSearch = (e) => {
+    if (e.keyCode === 9)
+        e.preventDefault()
+    
+}
+
 const keyHandler = (e) => {
     if (store.getState().Graph.present.vertexSelected !== null ||
         store.getState().Graph.present.edgeSelected !== null)
@@ -563,6 +569,10 @@ const keyHandler = (e) => {
         e.preventDefault()
         return window.$('.button-collapse').click()
     }
+    if(e.keyCode === 70 && e.ctrlKey) {
+        e.preventDefault()
+        return window.$('div.search').click()
+    }
 }
 
 class GraphEdit extends Component {
@@ -581,10 +591,12 @@ class GraphEdit extends Component {
             edge: 'left',
             closeOnClick: true,
             onOpen: () => {
+                window.$('.blurrable').addClass('blurred')
                 window.$('nav').addClass('blurred')
                 window.$('div.col.s12').addClass('blurred')
             },
             onClose: () => {
+                window.$('.blurrable').removeClass('blurred')
                 window.$('nav').removeClass('blurred')
                 window.$('div.col.s12').removeClass('blurred')
 
@@ -644,8 +656,17 @@ class GraphEdit extends Component {
         let empty = true
         const graphState = store.getState().Graph.present;
 
+        if(this.state.searching) {
+            document.removeEventListener("keydown", keyHandler)
+            document.addEventListener("keydown", keyHandlerSearch)
+        }
+        else {
+            document.removeEventListener("keydown", keyHandlerSearch)
+            document.addEventListener("keydown", keyHandler)
+        }
+
         return <div className="container">
-            <div className={"search " + (this.state.searching ? " active" : "")} onClick={() => this.setState({ searching: true })}>
+            <div className={"search blurrable" + (this.state.searching ? " active" : "")} onClick={() => this.setState({ searching: true })}>
                 {this.state.searching ?
                     <div>
                         {this.state.searchFor &&

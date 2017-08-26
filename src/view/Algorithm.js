@@ -231,10 +231,12 @@ class Algorithm extends Component {
             edge: 'left',
             closeOnClick: true,
             onOpen: () => {
+                window.$('.blurrable').addClass('blurred')
                 window.$('nav').addClass('blurred')
                 window.$('div.col.s12').addClass('blurred')
             },
             onClose: () => {
+                window.$('.blurrable').removeClass('blurred')
                 window.$('nav').removeClass('blurred')
                 window.$('div.col.s12').removeClass('blurred')
 
@@ -295,7 +297,7 @@ class Algorithm extends Component {
 
     render() {
         return <div className="container">
-            <div className="search" onClick={() => store.dispatch({
+            <div className="search blurrable" onClick={() => store.dispatch({
                 type: 'SET_PAGE',
                 id: itens[0].id
             })}>

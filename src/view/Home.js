@@ -11,6 +11,17 @@ const is_valid = (e, filter) => {
     return false
 }
 
+const keyHandler = (e) => {
+   if ((e.keyCode === 77 || e.keyCode === 9) && window.innerWidth < 1700) {
+        e.preventDefault()
+        return window.$('.button-collapse').click()
+    }
+    if(e.keyCode === 70 && e.ctrlKey) {
+        e.preventDefault()
+        return window.$('div.search').click()
+    }
+}
+
 class Item extends Component {
     render() {
         return <div className="col s12 m6 l4">
@@ -34,6 +45,14 @@ class Item extends Component {
 
 class Home extends Component {
     state = { searching: false, searchFor: '' }
+
+    componentDidMount() {
+        document.addEventListener("keydown", keyHandler)
+    }
+
+    componentWillUnmount() {
+        document.addEventListener('keydown', keyHandler)
+    }
 
     render() {
         let empty = true
