@@ -641,6 +641,7 @@ class GraphEdit extends Component {
     }
 
     render() {
+        let empty = true
         const graphState = store.getState().Graph.present;
 
         return <div className="container">
@@ -649,20 +650,26 @@ class GraphEdit extends Component {
                     <div>
                         {this.state.searchFor &&
                             <ul>
-                                {itens.map((e, id) => id !== 0 && is_valid(e, this.state.searchFor) ?
-                                    <li key={id} onClick={p => {
-                                        store.dispatch({
-                                            type: 'SET_PAGE',
-                                            id: e.id
-                                        })
-                                    }}>
-                                        {e.name}
-                                    </li>
-                                    :
-                                    null)}
+                                {itens.map((e, id) => {
+                                    if (id !== 0 && is_valid(e, this.state.searchFor)) {
+                                        this.empty = false
+
+                                        return <li key={id} onClick={p => {
+                                            store.dispatch({
+                                                type: 'SET_PAGE',
+                                                id: e.id
+                                            })
+                                        }}>
+                                            {e.name}
+                                        </li>
+                                    }
+                                    else 
+                                        return null
+                                })}
+                                {empty && <li onClick={e => e.preventDefault}>Nada encontrado!</li>}
                             </ul>
                         }
-                        <input type="text" placeholder="Pesquisar..." autoFocus
+                        <input type="text" placeholder="Executar algoritmos..." autoFocus
                             onFocus={e => e.target.select()}
                             onBlur={e => e.target.value === '' && this.setState({ searching: false })}
                             value={this.state.searchFor}
