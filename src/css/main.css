@@ -221,7 +221,7 @@ circle, text {
     margin: 0;
     padding: 20px 0 5px 0;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.17), -1px 1px 1px rgba(0, 0, 0, 0.17);
-    border-radius: 5px;
+    border-radius: 0 0px 5px 5px;
 }
 
 .search.active ul li {

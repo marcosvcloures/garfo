@@ -652,7 +652,7 @@ class GraphEdit extends Component {
                             <ul>
                                 {itens.map((e, id) => {
                                     if (id !== 0 && is_valid(e, this.state.searchFor)) {
-                                        this.empty = false
+                                        empty = false
 
                                         return <li key={id} onClick={p => {
                                             store.dispatch({
@@ -669,7 +669,7 @@ class GraphEdit extends Component {
                                 {empty && <li onClick={e => e.preventDefault}>Nada encontrado!</li>}
                             </ul>
                         }
-                        <input type="text" placeholder="Executar algoritmos..." autoFocus
+                        <input type="text" placeholder="Pesquisar algoritmos..." autoFocus
                             onFocus={e => e.target.select()}
                             onBlur={e => e.target.value === '' && this.setState({ searching: false })}
                             value={this.state.searchFor}
