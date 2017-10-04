@@ -17,14 +17,12 @@ const Graph = (state = cookie ?
     :
     {
         vertexList: [], edgeList: [], edgeListIntent: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
-        directionalEdges: true, weightedEdges: true
+        directionalEdges: false, weightedEdges: false
     }, action) => {
     if (action.from !== 'GRAPH')
         return state;
 
     const controlsState = store.getState().ControlsEdit.action;
-
-    console.log(state);
 
     switch (action.type) {
         case 'CLEAR_GRAPH':
@@ -212,7 +210,11 @@ const Graph = (state = cookie ?
             return { ...state, weightedEdges: !state.weightedEdges };
         case 'LOAD_GRAPH_DEFAULT':
             return {
-                ...state, vertexList: [], edgeList: [], edgeListIntent: action.edgeList
+                ...state, 
+                vertexList: [], 
+                edgeList: [], 
+                edgeListIntent: action.edgeList,
+                directionalEdges: false, weightedEdges: false
             }
         default:
             return state;

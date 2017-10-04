@@ -1,4 +1,4 @@
-const ControlsEdit = (state = { action: 'ADD', displayLabel: true, directionalEdges: true }, action) => {
+const ControlsEdit = (state = { action: 'ADD' }, action) => {
     if (action.from !== 'CONTROLS_EDIT')
         return state;
 

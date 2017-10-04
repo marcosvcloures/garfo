@@ -243,3 +243,9 @@ circle, text {
 #graphLoad .right.circle {
     border-radius: 0;
 }
+
+#modalLoad {
+    z-index: 10005 !important;
+    opacity: 1 !important;
+    background: #fff !important;
+}

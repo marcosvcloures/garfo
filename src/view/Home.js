@@ -27,9 +27,12 @@ class DefaultGraphs extends Component {
         { name: "K5", id: "k5", img: 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Complete_graph_K5.svg' },
         { name: "K3,3", id: "k33", img: 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Biclique_K_3_3.svg' },
         { name: "Petersen", id: "petersen", img: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Petersen1_tiny.svg' },
+        { name: "Cubo", id: "cubo", img: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/3-cube_column_graph.svg' },
     ]
 
     state = { canSend: false, searchFor: "" }
+
+    input = null
 
     loadGraph = id => {
         window.$('#graphLoad').modal('close')
@@ -49,12 +52,16 @@ class DefaultGraphs extends Component {
 
         window.$('#graphLoad').modal({
             dismissible: false,
-            ready: e => window.$('#graphName').autocomplete({
-                data: data,
-                limit: 20,
-                onAutocomplete: e => this.loadGraph(this.data.filter(p => p.name.toLowerCase().lastIndexOf(e.toLowerCase()) !== -1)[0].id),
-                minLength: 1,
-            })
+            ready: e => {
+                window.$('#graphName').autocomplete({
+                    data: data,
+                    limit: 4,
+                    onAutocomplete: e => this.loadGraph(this.data.filter(p => p.name.toLowerCase().lastIndexOf(e.toLowerCase()) !== -1)[0].id),
+                    minLength: 0,
+                })
+
+                this.input.focus();
+            }
         });
     }
 
@@ -64,7 +71,7 @@ class DefaultGraphs extends Component {
                 <h4>Carregar grafo padrão</h4>
                 <div className="row">
                     <div className="input-field col m12">
-                        <input id="graphName" type="text" onChange={e => this.setState({
+                        <input id="graphName" ref={e => this.input = e} type="text" autoFocus onChange={e => this.setState({
                             searchFor: e.target.value,
                             canSend: this.data.filter(p => p.name.toLowerCase().lastIndexOf(e.target.value.toLowerCase()) !== -1).length === 1
                         })} />
@@ -159,8 +166,12 @@ class Home extends Component {
                     <a className="waves-effect btn" onClick={e => {
                         window.$('#graphLoad').modal('open')
                     }}>Carregar grafo padrão</a>
-                    <span className="waves-effect btn">Importar grafo atual</span>
-                    <span className="waves-effect btn">Exportar grafo atual</span>
+                    <a className="waves-effect btn">Importar grafo</a>
+                    <a className="waves-effect btn" onClick={e =>
+                        console.log(JSON.stringify(store.getState().Graph.present.edgeList.map(e => { return { from: e.from.id, to: e.to.id } })))
+                    }>
+                    Exportar grafo atual
+                    </a>
                 </div>
             </div>
 

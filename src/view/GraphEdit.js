@@ -662,7 +662,7 @@ class GraphEdit extends Component {
         document.addEventListener("keydown", keyHandler);
 
         if (this.props.default)
-            window.$('#modalLoad').modal('open')
+            setTimeout(() => window.$('#modalLoad').modal('open'), 500)
 
         switch (this.props.default) {
             case 'k5':
@@ -691,6 +691,14 @@ class GraphEdit extends Component {
                     edgeList: [{ from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 3 }, { from: 3, to: 4 }, { from: 4, to: 0 },
                     { from: 5, to: 7 }, { from: 7, to: 9 }, { from: 9, to: 6 }, { from: 6, to: 8 }, { from: 8, to: 5 },
                     { from: 0, to: 5 }, { from: 1, to: 6 }, { from: 2, to: 7 }, { from: 3, to: 8 }, { from: 4, to: 9 }]
+                })
+                break;
+            case 'cubo':
+                store.dispatch({
+                    from: "GRAPH",
+                    type: "LOAD_GRAPH_DEFAULT",
+                    edgeList: [{ from: 0, to: 1 }, { from: 2, to: 3 }, { from: 4, to: 5 }, { from: 6, to: 7 }, { from: 6, to: 0 },
+                    { from: 6, to: 4 }, { from: 1, to: 7 }, { from: 7, to: 5 }, { from: 0, to: 2 }, { from: 1, to: 3 }, { from: 4, to: 2 }, { from: 5, to: 3 }]
                 })
                 break;
             default:
