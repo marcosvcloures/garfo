@@ -16,6 +16,8 @@ const Page = (state = { id: 'Home', component: <Home /> }, action) => {
                     return { name: "Home", id: action.id, component: <Home /> };
                 case 'Edit':
                     return { name: "Editar grafo", id: action.id, component: <GraphEdit /> };
+                case 'Load':
+                    return { name: "sabugar grafo", id: action.id, component: <GraphEdit default={action.default} /> };
                 case 'Dijkstra':
                     return { name: "Dijkstra", id: action.id, component: <Dijkstra /> };
                 case 'Kruskal':
@@ -29,6 +31,8 @@ const Page = (state = { id: 'Home', component: <Home /> }, action) => {
                 default:
                     return { name: "404", id: action.id, component: <Home /> };
             }
+        case 'LOAD_GRAPH':
+            return { name: "Editar grafo", id: action.id, component: <GraphEdit /> };
         default:
             return state;
     }

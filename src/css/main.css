@@ -239,3 +239,7 @@ circle, text {
     border: none !important;
     box-shadow: none !important;
 }
+
+#graphLoad .right.circle {
+    border-radius: 0;
+}

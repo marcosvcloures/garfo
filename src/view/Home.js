@@ -12,13 +12,77 @@ const is_valid = (e, filter) => {
 }
 
 const keyHandler = (e) => {
-   if (e.keyCode === 9 && window.innerWidth < 1700) {
+    if (e.keyCode === 9 && window.innerWidth < 1700) {
         e.preventDefault()
         return window.$('.button-collapse').click()
     }
-    if(e.keyCode === 70 && e.ctrlKey) {
+    if (e.keyCode === 70 && e.ctrlKey) {
         e.preventDefault()
         return window.$('div.search').click()
+    }
+}
+
+class DefaultGraphs extends Component {
+    data = [
+        { name: "K5", id: "k5", img: 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Complete_graph_K5.svg' },
+        { name: "K3,3", id: "k33", img: 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Biclique_K_3_3.svg' },
+        { name: "Petersen", id: "petersen", img: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Petersen1_tiny.svg' },
+    ]
+
+    state = { canSend: false, searchFor: "" }
+
+    loadGraph = id => {
+        window.$('#graphLoad').modal('close')
+
+        store.dispatch({
+            type: "SET_PAGE",
+            id: "Load",
+            default: id
+        })
+    }
+
+    componentDidMount() {
+        let data = {};
+
+        for (let it of this.data)
+            data[it.name] = it.img
+
+        window.$('#graphLoad').modal({
+            dismissible: false,
+            ready: e => window.$('#graphName').autocomplete({
+                data: data,
+                limit: 20,
+                onAutocomplete: e => this.loadGraph(this.data.filter(p => p.name.toLowerCase().lastIndexOf(e.toLowerCase()) !== -1)[0].id),
+                minLength: 1,
+            })
+        });
+    }
+
+    render() {
+        return <div className="modal" id="graphLoad">
+            <div className="modal-content">
+                <h4>Carregar grafo padrão</h4>
+                <div className="row">
+                    <div className="input-field col m12">
+                        <input id="graphName" type="text" onChange={e => this.setState({
+                            searchFor: e.target.value,
+                            canSend: this.data.filter(p => p.name.toLowerCase().lastIndexOf(e.target.value.toLowerCase()) !== -1).length === 1
+                        })} />
+                        <label htmlFor="graphName">Nome do grafo</label>
+                    </div>
+                </div>
+            </div>
+            <div className="modal-footer">
+                <button className={"modal-action modal-close waves-effect waves-green btn-flat" + (this.state.canSend ? "" : " disabled")}
+                    onClick={e => this.loadGraph(this.data.filter(p => p.name.toLowerCase().lastIndexOf(this.state.searchFor.toLowerCase()) !== -1)[0].id)}>
+                    Carregar
+                </button>
+                <button className="modal-action modal-close waves-effect waves-red btn-flat"
+                    style={{ marginRight: "5px" }}>
+                    Cancelar
+            </button>
+            </div>
+        </div>
     }
 }
 
@@ -48,6 +112,26 @@ class Home extends Component {
 
     componentDidMount() {
         document.addEventListener("keydown", keyHandler)
+
+        window.$(".button-collapse").sideNav({
+            menuWidth: 250,
+            edge: 'left',
+            closeOnClick: true,
+            onOpen: () => {
+                window.$('.blurrable').addClass('blurred')
+                window.$('nav').addClass('blurred')
+                window.$('div.col.s12').addClass('blurred')
+            },
+            onClose: () => {
+                window.$('.blurrable').removeClass('blurred')
+                window.$('nav').removeClass('blurred')
+                window.$('div.col.s12').removeClass('blurred')
+
+                while (window.$('#sidenav-overlay').length)
+                    window.$('#sidenav-overlay').replaceWith('')
+            },
+            draggable: true
+        });
     }
 
     componentWillUnmount() {
@@ -58,7 +142,7 @@ class Home extends Component {
         let empty = true
 
         return <div className="container">
-            <div className={"search " + (this.state.searching ? " active" : "")} onClick={() => this.setState({ searching: true })}>
+            <div className={"search blurrable" + (this.state.searching ? " active" : "")} onClick={() => this.setState({ searching: true })}>
                 {this.state.searching ?
                     <input type="text" placeholder="Pesquisar..." autoFocus
                         onFocus={e => e.target.select()}
@@ -69,9 +153,22 @@ class Home extends Component {
                     <i className="material-icons">search</i>
                 }
             </div>
+
+            <div className="col side-nav" id="right-menu">
+                <div className="side-menu">
+                    <a className="waves-effect btn" onClick={e => {
+                        window.$('#graphLoad').modal('open')
+                    }}>Carregar grafo padrão</a>
+                    <span className="waves-effect btn">Importar grafo atual</span>
+                    <span className="waves-effect btn">Exportar grafo atual</span>
+                </div>
+            </div>
+
+            <DefaultGraphs />
+
             <div className="row">
                 {itens.map((e, id) => {
-                    if(is_valid(e, this.state.searchFor)) {
+                    if (is_valid(e, this.state.searchFor)) {
                         empty = false
 
                         return <Item {...e} key={id} />
@@ -81,14 +178,17 @@ class Home extends Component {
                 })}
 
                 {empty && <div className='col s12 center'>
-                <i className="material-icons nothing-found" style={{
+                    <i className="material-icons nothing-found" style={{
                         fontSize: '5em',
                         marginTop: '20px'
                     }}></i>
                     <h4>Nada encontrado.</h4>
                     <p>Não foi possível encontrar nenhum algoritmo que corresponde a sua pesquisa!</p>
-                    <p><a href="mailto:marcosvcloures@gmail.com?Subject=Garfo:%20Sujest&atilde;o">Mande uma sugestão</a></p>
-                    </div>}
+                    <p>
+                        <a href="mailto:marcosvcloures@gmail.com?Subject=Garfo:%20Sujest&atilde;o">Mande uma sugestão</a>
+                    </p>
+                </div>
+                }
             </div>
         </div>;
     }

@@ -568,9 +568,38 @@ const keyHandler = (e) => {
         e.preventDefault()
         return window.$('.button-collapse').click()
     }
-    if(e.keyCode === 70 && e.ctrlKey) {
+    if (e.keyCode === 70 && e.ctrlKey) {
         e.preventDefault()
         return window.$('div.search').click()
+    }
+}
+
+class ModalLoad extends React.Component {
+    componentDidMount() {
+        document.addEventListener("keydown", this.handleKeyPress);
+
+        window.$('#modalLoad').modal({
+            dismissible: false
+        })
+    }
+
+    render() {
+        return <div className="modal" id="modalLoad">
+            <div className="modal-content">
+                <h4>Adicione os vértices!</h4>
+                <div className="row">
+                    <h6>Escolha onde ficarão os vértices do grafo carregado!<br />
+                        Para adicionar um vértice, basta clicar no lugar desejado.</h6>
+                </div>
+            </div>
+            <div className="modal-footer center-align">
+                <button className="waves-effect waves-blue btn-flat modal-action modal-close" onClick={() => {
+                    window.$('#modalLoad').modal('close')
+                }}>
+                    Entendi!
+                </button>
+            </div>
+        </div>;
     }
 }
 
@@ -631,6 +660,42 @@ class GraphEdit extends Component {
         }), 700);
 
         document.addEventListener("keydown", keyHandler);
+
+        if (this.props.default)
+            window.$('#modalLoad').modal('open')
+
+        switch (this.props.default) {
+            case 'k5':
+                store.dispatch({
+                    from: "GRAPH",
+                    type: "LOAD_GRAPH_DEFAULT",
+                    edgeList: [{ from: 0, to: 1 }, { from: 0, to: 2 }, { from: 0, to: 3 }, { from: 0, to: 4 },
+                    { from: 1, to: 2 }, { from: 1, to: 3 }, { from: 1, to: 4 },
+                    { from: 2, to: 3 }, { from: 2, to: 4 },
+                    { from: 3, to: 4 }]
+                })
+                break;
+            case 'k33':
+                store.dispatch({
+                    from: "GRAPH",
+                    type: "LOAD_GRAPH_DEFAULT",
+                    edgeList: [{ from: 0, to: 3 }, { from: 0, to: 4 }, { from: 0, to: 5 },
+                    { from: 1, to: 3 }, { from: 1, to: 4 }, { from: 1, to: 5 },
+                    { from: 2, to: 3 }, { from: 2, to: 4 }, { from: 2, to: 5 }]
+                })
+                break;
+            case 'petersen':
+                store.dispatch({
+                    from: "GRAPH",
+                    type: "LOAD_GRAPH_DEFAULT",
+                    edgeList: [{ from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 3 }, { from: 3, to: 4 }, { from: 4, to: 0 },
+                    { from: 5, to: 7 }, { from: 7, to: 9 }, { from: 9, to: 6 }, { from: 6, to: 8 }, { from: 8, to: 5 },
+                    { from: 0, to: 5 }, { from: 1, to: 6 }, { from: 2, to: 7 }, { from: 3, to: 8 }, { from: 4, to: 9 }]
+                })
+                break;
+            default:
+                break;
+        }
     }
 
     componentWillUnmount() {
@@ -655,21 +720,18 @@ class GraphEdit extends Component {
         let empty = true
         const graphState = store.getState().Graph.present;
 
-        if(this.state.searching) {
-            console.log('we')
+        if (this.state.searching) {
             document.removeEventListener("keydown", keyHandler)
             document.addEventListener("keydown", keyHandlerSearch)
         }
         else {
-            console.log('====================================');
-            console.log('wa');
-            console.log('====================================');
             document.removeEventListener("keydown", keyHandlerSearch)
             document.addEventListener("keydown", keyHandler)
         }
 
         return <div className="container">
             <div className={"search blurrable" + (this.state.searching ? " active" : "")} onClick={() => this.setState({ searching: true })}>
+
                 {this.state.searching ?
                     <div>
                         {this.state.searchFor &&
@@ -678,7 +740,7 @@ class GraphEdit extends Component {
                                     if (id !== 0 && is_valid(e, this.state.searchFor)) {
                                         empty = false
 
-                                        return <li key={id} onClick={p => {
+                                        return <li key={id} onMouseDown={p => {
                                             store.dispatch({
                                                 type: 'SET_PAGE',
                                                 id: e.id
@@ -687,7 +749,7 @@ class GraphEdit extends Component {
                                             {e.name}
                                         </li>
                                     }
-                                    else 
+                                    else
                                         return null
                                 })}
                                 {empty && <li onClick={e => e.preventDefault}>Nada encontrado!</li>}
@@ -695,7 +757,7 @@ class GraphEdit extends Component {
                         }
                         <input type="text" placeholder="Pesquisar algoritmos..." autoFocus
                             onFocus={e => e.target.select()}
-                            onBlur={e => e.target.value === '' && this.setState({ searching: false })}
+                            onBlur={e => this.setState({ searching: false })}
                             value={this.state.searchFor}
                             onChange={e => this.setState({ searchFor: e.target.value })} />
                     </div>
@@ -712,6 +774,9 @@ class GraphEdit extends Component {
                 <Graph />
             </div>
 
+            {this.props.default &&
+                <ModalLoad />
+            }
             <VertexProps vertex={graphState.vertexSelected} />
             <EdgeProps edge={graphState.edgeSelected} />
 

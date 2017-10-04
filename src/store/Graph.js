@@ -5,22 +5,26 @@ const cookie = document.cookie ? JSON.parse(document.cookie) : null
 const Graph = (state = cookie ?
     {
         ...cookie,
-        edgeList: cookie.edgeList.map(e => { return {
-            ...e,
-            from: cookie.vertexList[e.from],
-            to: cookie.vertexList[e.to],
-        } }), 
+        edgeList: cookie.edgeList.map(e => {
+            return {
+                ...e,
+                from: cookie.vertexList[e.from],
+                to: cookie.vertexList[e.to],
+            }
+        }),
         vertexSelected: null, mouseDownVertex: false, edgeSelected: null
     }
     :
     {
-        vertexList: [], edgeList: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
+        vertexList: [], edgeList: [], edgeListIntent: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
         directionalEdges: true, weightedEdges: true
     }, action) => {
     if (action.from !== 'GRAPH')
         return state;
 
     const controlsState = store.getState().ControlsEdit.action;
+
+    console.log(state);
 
     switch (action.type) {
         case 'CLEAR_GRAPH':
@@ -176,20 +180,40 @@ const Graph = (state = cookie ?
             if (controlsState !== 'ADD' || state.mouseDownVertex === true)
                 return { ...state, mouseDownVertex: false };
 
+            const newVertexListAdd = [...state.vertexList, {
+                id: state.vertexList.length,
+                label: state.vertexList.length + 1,
+                x: action.x,
+                y: action.y,
+                selected: false
+            }]
+
             return {
                 ...state,
-                vertexList: [...state.vertexList, {
-                    id: state.vertexList.length,
-                    label: state.vertexList.length + 1,
-                    x: action.x,
-                    y: action.y,
-                    selected: false
-                }]
+                vertexList: newVertexListAdd,
+                edgeList: [...state.edgeList,
+                    ...state.edgeListIntent.filter(e => e.from < newVertexListAdd.length && e.to < newVertexListAdd.length)
+                    .map((e, idx) => {
+                        return {
+                            id: state.edgeList.length + idx,
+                            from: newVertexListAdd[e.from],
+                            to: newVertexListAdd[e.to],
+                            opositeEdge: state.edgeList.findIndex(p => p.from.id === e.to && p.to.id === e.from) !== -1,
+                            weight: 1,
+                            capacity: 0
+                        }
+                    })
+                ],
+                edgeListIntent: state.edgeListIntent.filter(e => e.from >= newVertexListAdd.length || e.to >= newVertexListAdd.length)
             };
         case 'DIRECTIONAL_EDGES':
             return { ...state, directionalEdges: !state.directionalEdges };
         case 'WEIGHTED_EDGES':
             return { ...state, weightedEdges: !state.weightedEdges };
+        case 'LOAD_GRAPH_DEFAULT':
+            return {
+                ...state, vertexList: [], edgeList: [], edgeListIntent: action.edgeList
+            }
         default:
             return state;
     }
