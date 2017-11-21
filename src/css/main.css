@@ -249,3 +249,12 @@ circle, text {
     opacity: 1 !important;
     background: #fff !important;
 }
+
+#jsonInput {
+    overflow-y: scroll;
+    padding: 0;
+    resize: none;
+    margin: 0.4rem 0 0 0;
+    max-height: 8rem;
+    min-height: 8rem;
+}

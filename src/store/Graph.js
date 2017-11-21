@@ -28,7 +28,7 @@ const Graph = (state = cookie ?
         case 'CLEAR_GRAPH':
             return {
                 vertexList: [], edgeList: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
-                directionalEdges: true, weightedEdges: true
+                directionalEdges: true, weightedEdges: true, edgeListIntent: []
             };
         case 'SAVE_VERTEX':
             const newVertexList = state.vertexList.map(e => {

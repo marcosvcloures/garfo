@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import store from '../store'
 
+import Clipboard from 'clipboard';
+
 import itens from '../helper/algorithmIndex'
 
 const is_valid = (e, filter) => {
@@ -19,6 +21,37 @@ const keyHandler = (e) => {
     if (e.keyCode === 70 && e.ctrlKey) {
         e.preventDefault()
         return window.$('div.search').click()
+    }
+}
+
+class ImportGraph extends Component {
+    componentDidMount() {
+        window.$('#importGraph').modal({
+            dismissible: false
+        });
+    }
+
+    render() {
+        return <div className="modal" id="importGraph">
+            <div className="modal-content">
+                <h4>Importar grafo</h4>
+                <div className="row" style={{marginBottom: 0}}>
+                    <div className="input-field col m12">
+                        <textarea id="jsonInput" className="materialize-textarea"></textarea>
+                        <label htmlFor="jsonInput">JSON exportado</label>
+                    </div>
+                </div>
+            </div>
+            <div className="modal-footer">
+                <button className="modal-action modal-close waves-effect waves-green btn-flat">
+                    Carregar
+                </button>
+                <button className="modal-action modal-close waves-effect waves-red btn-flat"
+                    style={{ marginRight: "5px" }}>
+                    Cancelar
+            </button>
+            </div>
+        </div>
     }
 }
 
@@ -139,6 +172,8 @@ class Home extends Component {
             },
             draggable: true
         });
+
+        new Clipboard('.export');
     }
 
     componentWillUnmount() {
@@ -166,16 +201,19 @@ class Home extends Component {
                     <a className="waves-effect btn" onClick={e => {
                         window.$('#graphLoad').modal('open')
                     }}>Carregar grafo padrão</a>
-                    <a className="waves-effect btn">Importar grafo</a>
-                    <a className="waves-effect btn" onClick={e =>
+                    <a className="waves-effect btn" onClick={e => window.$('#importGraph').modal('open')}>
+                        Importar grafo</a>
+                    <a className="waves-effect btn export" onClick={e =>
                         console.log(JSON.stringify(store.getState().Graph.present.edgeList.map(e => { return { from: e.from.id, to: e.to.id } })))
-                    }>
+                    } data-clipboard-text={JSON.stringify(store.getState().Graph.present)}>
                     Exportar grafo atual
                     </a>
                 </div>
             </div>
 
             <DefaultGraphs />
+            
+            <ImportGraph />
 
             <div className="row">
                 {itens.map((e, id) => {

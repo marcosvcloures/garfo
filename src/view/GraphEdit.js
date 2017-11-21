@@ -661,9 +661,15 @@ class GraphEdit extends Component {
 
         document.addEventListener("keydown", keyHandler);
 
-        if (this.props.default)
-            setTimeout(() => window.$('#modalLoad').modal('open'), 500)
+        if (this.props.default) {
+            store.dispatch({
+                type: "ADD",
+                from: "CONTROLS_EDIT"
+            });
 
+            setTimeout(() => window.$('#modalLoad').modal('open'), 500)
+        }
+        
         switch (this.props.default) {
             case 'k5':
                 store.dispatch({

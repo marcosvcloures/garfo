@@ -7,6 +7,7 @@
   "homepage": "http://marcosvcloures.github.io/garfo",
   "private": true,
   "dependencies": {
+    "clipboard": "^1.7.1",
     "material-design-icons": "^3.0.1",
     "materialize-css": "^0.98.2",
     "react": "^15.6.1",
