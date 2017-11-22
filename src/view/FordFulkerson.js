@@ -86,7 +86,7 @@ const vertexClick = (vertex) => {
     }
 }
 
-const bfs = (from, to, adjMatrix) => {
+const dfs = (from, to, adjMatrix, originalMatrix) => {
     let queue = [{ id: from, parent: from }];
     let visited = new Array(adjMatrix.length)
     let parents = new Array(adjMatrix.length)
@@ -95,16 +95,16 @@ const bfs = (from, to, adjMatrix) => {
         let top = queue[queue.length - 1].id;
         let parent = queue[queue.length - 1].parent
 
+        queue.pop()
+
         if (!visited[top]) {
             visited[top] = 1;
             parents[top] = parent
 
-            for (let i in adjMatrix)
-                if (!visited[i] && adjMatrix[top][i].weight)
-                    queue = [{ id: i, parent: top }, ...queue]
+            for (let i = adjMatrix.length - 1; i >= 0; i--)
+                if (!visited[i] && adjMatrix[top][i].weight) 
+                    queue = [...queue, { id: i, parent: top }]
         }
-
-        queue.pop()
     }
 
     if (parents[to] === undefined)
@@ -123,32 +123,37 @@ const bfs = (from, to, adjMatrix) => {
 
     for (let i = 1; i < path.length; i++) {
         adjMatrix[path[i - 1]][path[i]].weight -= flow;
-        adjMatrix[path[i - 1]][path[i]].color = "blue";
-        adjMatrix[path[i - 1]][path[i]].used = true;
 
+        let equal = adjMatrix[path[i - 1]][path[i]].weight === originalMatrix[path[i - 1]][path[i]].weight;
+
+        adjMatrix[path[i - 1]][path[i]].color = equal ? "#ccc" : "blue";
+        adjMatrix[path[i - 1]][path[i]].used = !equal;
 
         adjMatrix[path[i]][path[i - 1]].weight += flow;
-        adjMatrix[path[i]][path[i - 1]].color = "red";
-        adjMatrix[path[i]][path[i - 1]].used = true;
+
+        equal = adjMatrix[path[i]][path[i - 1]].weight === originalMatrix[path[i]][path[i - 1]].weight;
+
+        adjMatrix[path[i]][path[i - 1]].color = equal ? "#ccc" : "red";
+        adjMatrix[path[i]][path[i - 1]].used = !equal;
     }
 
     return { valid: true, flow: flow }
 }
 
 const Step = () => {
-    const present = store.getState().Algorithm.present
-    let adjMatrix = present.vars.adjMatrix;
+    const present = store.getState().Algorithm.present    
+    let adjMatrix = present.vars.adjMatrix.map(e => e.map(f => { return {...f} }));
 
     if (present.vars.source !== null && present.vars.sink !== null) {
-        const it = bfs(present.vars.source, present.vars.sink, adjMatrix)
+        const it = dfs(present.vars.source, present.vars.sink, adjMatrix, present.vars.originalMatrix)
 
         if (it.valid) {
-            present.vertexList[present.vars.sink].helperText = parseInt(present.vertexList[present.vars.sink].helperText, 10) + it.flow
+            present.vertexList[present.vars.sink].helperText = present.vars.flow + it.flow
             store.dispatch({
                 type: 'ALGORITHM_STEP',
                 vertexList: present.vertexList,
-                edgeList: matrixToEdgeList(present.vars.adjMatrix),
-                vars: { ...present.vars }
+                edgeList: matrixToEdgeList(adjMatrix),
+                vars: { ...present.vars, adjMatrix: adjMatrix, flow: present.vars.flow + it.flow }
             })
         }
         else
@@ -178,7 +183,9 @@ const Init = () => {
         vars: {
             source: null,
             sink: null,
+            originalMatrix: adjMatrix,
             adjMatrix: adjMatrix,
+            flow: 0,
             directionalEdges: true
         },
         step_func: Step,
