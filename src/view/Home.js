@@ -25,6 +25,8 @@ const keyHandler = (e) => {
 }
 
 class ImportGraph extends Component {
+    state = { json: "" }
+
     componentDidMount() {
         window.$('#importGraph').modal({
             dismissible: false
@@ -35,20 +37,64 @@ class ImportGraph extends Component {
         return <div className="modal" id="importGraph">
             <div className="modal-content">
                 <h4>Importar grafo</h4>
-                <div className="row" style={{marginBottom: 0}}>
+                <div className="row" style={{ marginBottom: 0 }}>
                     <div className="input-field col m12">
-                        <textarea id="jsonInput" className="materialize-textarea"></textarea>
+                        <textarea id="jsonInput" value={this.state.json}
+                            className="materialize-textarea"
+                            onChange={e => this.setState({ json: e.target.value })}
+                        ></textarea>
                         <label htmlFor="jsonInput">JSON exportado</label>
                     </div>
                 </div>
             </div>
             <div className="modal-footer">
-                <button className="modal-action modal-close waves-effect waves-green btn-flat">
+                <button className="modal-action modal-close waves-effect waves-green btn-flat"
+                    onClick={e => store.dispatch({
+                        from: "GRAPH",
+                        type: "IMPORT_GRAPH",
+                        state: this.state.json
+                    })}
+                >
                     Carregar
                 </button>
                 <button className="modal-action modal-close waves-effect waves-red btn-flat"
                     style={{ marginRight: "5px" }}>
                     Cancelar
+            </button>
+            </div>
+        </div>
+    }
+}
+
+class ExportGraph extends Component {
+    componentDidMount() {
+        window.$('#exportGraph').modal({
+            dismissible: false
+        });
+    }
+
+    render() {
+        return <div className="modal" id="exportGraph">
+            <div className="modal-content">
+                <h4>Exportar grafo</h4>
+                <div className="row" style={{ marginBottom: 0 }}>
+                    <div className="input-field col m12">
+                        <textarea id="jsonInput" value={JSON.stringify(store.getState().Graph.present)}
+                            className="materialize-textarea"
+                        ></textarea>
+                        <label htmlFor="jsonInput" className="active">JSON exportado</label>
+                    </div>
+                </div>
+            </div>
+            <div className="modal-footer">
+                <button className="modal-action modal-close waves-effect waves-green btn-flat export"
+                    data-clipboard-text={JSON.stringify(store.getState().Graph.present)}
+                >
+                    Copiar para a área de transferência
+                </button>
+                <button className="modal-action modal-close waves-effect waves-red btn-flat"
+                    style={{ marginRight: "5px" }}>
+                    Fechar
             </button>
             </div>
         </div>
@@ -203,18 +249,21 @@ class Home extends Component {
                     }}>Carregar grafo padrão</a>
                     <a className="waves-effect btn" onClick={e => window.$('#importGraph').modal('open')}>
                         Importar grafo</a>
-                    <a className="waves-effect btn export" onClick={e =>
-                        console.log(JSON.stringify(store.getState().Graph.present.edgeList.map(e => { return { from: e.from.id, to: e.to.id } })))
-                    } data-clipboard-text={JSON.stringify(store.getState().Graph.present)}>
-                    Exportar grafo atual
+                    <a className="waves-effect btn" onClick={e =>
+                        window.$("#exportGraph").modal('open')
+                        //console.log(JSON.stringify(store.getState().Graph.present.edgeList.map(e => { return { from: e.from.id, to: e.to.id } })))
+                    }>
+                        Exportar grafo atual
                     </a>
                 </div>
             </div>
 
             <DefaultGraphs />
-            
+
             <ImportGraph />
 
+            <ExportGraph />
+            
             <div className="row">
                 {itens.map((e, id) => {
                     if (is_valid(e, this.state.searchFor)) {

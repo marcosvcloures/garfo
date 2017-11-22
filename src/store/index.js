@@ -39,7 +39,8 @@ const reducers = combineReducers({
                         return {
                             ...e,
                             to: e.to.id,
-                            from: e.from.id
+                            from: e.from.id,
+                            name: e.name
                         }
                     })
                 })

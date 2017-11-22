@@ -102,10 +102,10 @@ const Vertex = (id, posX, posY, text) => {
     );
 }
 
-const Edge = (id, from, to, weight, oposite) => {
+const Edge = (id, from, to, weight, capacity, oposite, name) => {
     const DirectionalEdges = store.getState().Graph.present.directionalEdges;
     const WeightedEdges = store.getState().Graph.present.weightedEdges;
-    let x, y, loop;
+    let x, y, nx, ny, loop;
 
     if (from === to)
         loop = true;
@@ -115,10 +115,12 @@ const Edge = (id, from, to, weight, oposite) => {
     if (loop) {
         x = from.x;
         y = from.y + 70;
+        nx = from.x;
+        ny = from.y - 70;
 
         oposite = true;
     }
-    else if (WeightedEdges || oposite) {
+    else {
         const mx = (from.x + to.x) / 2;
         const my = (from.y + to.y) / 2;
 
@@ -129,6 +131,8 @@ const Edge = (id, from, to, weight, oposite) => {
 
         x = mx - vy * multi;
         y = my + vx * multi;
+        nx = mx + vy * multi;
+        ny = my - vx * multi;
     }
 
     return <g key={id}>
@@ -139,6 +143,15 @@ const Edge = (id, from, to, weight, oposite) => {
             textAnchor="middle"
             alignmentBaseline="central">
             {weight}
+        </text>}
+
+        {name && <text
+            display="block"
+            x={nx}
+            y={ny + (loop ? - 20 : 0)}
+            textAnchor="middle"
+            alignmentBaseline="central">
+            {name}
         </text>}
 
         {oposite ?
@@ -309,7 +322,7 @@ class Graph extends Component {
                 EdgeEdit(VertexList[graphState.mouseDownId],
                     { x: this.mouseX, y: this.mouseY })}
 
-            {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight, e.opositeEdge))}
+            {EdgeList.map(e => Edge(e.id, e.from, e.to, e.weight, e.capacity, e.opositeEdge, e.name))}
             {VertexList.map(e => Vertex(e.id, e.x, e.y, e.label))}
         </svg>;
     }
@@ -348,7 +361,7 @@ const ControlsEdit = () => {
                     type: "WEIGHTED_EDGES",
                     from: "GRAPH"
                 })} />
-            <label htmlFor="weighted">Arestas com peso</label>
+            <label htmlFor="weighted">Arestas com peso / capacidade</label>
         </p>
 
         <a className="waves-effect btn-flat clear-graph waves-red"
@@ -462,7 +475,8 @@ class EdgeProps extends React.Component {
             type: 'SAVE_EDGE',
             from: 'GRAPH',
             weight: !isNaN(parseInt(this.state.weight, 10)) ? parseInt(this.state.weight, 10) : 0,
-            capacity: !isNaN(parseInt(this.state.capacity, 10)) ? parseInt(this.state.capacity, 10) : 0
+            capacity: !isNaN(parseInt(this.state.capacity, 10)) ? parseInt(this.state.capacity, 10) : 0,
+            name: this.state.name
         })
 
         this.state = null
@@ -488,8 +502,20 @@ class EdgeProps extends React.Component {
                 <div className="row">
                     <div className="input-field col m12">
                         {this.state &&
-                            <input id="edgeWeight" type="number"
+                            <input id="name" type="text"
                                 autoFocus
+                                value={this.state.name}
+                                onFocus={(e) => e.target.select()}
+                                onKeyPress={this.handleKeyPress}
+                                onChange={e =>
+                                    this.setState({ name: e.target.value })
+                                } />
+                        }
+                        <label htmlFor="edgeWeight">Nome</label>
+                    </div>
+                    <div className="input-field col m12">
+                        {this.state &&
+                            <input id="edgeWeight" type="number"
                                 value={this.state.weight || ""}
                                 onFocus={(e) => e.target.select()}
                                 onKeyPress={this.handleKeyPress}
@@ -497,9 +523,9 @@ class EdgeProps extends React.Component {
                                     this.setState({ weight: !isNaN(parseInt(e.target.value, 10)) ? parseInt(e.target.value, 10) : null })
                                 } />
                         }
-                        <label htmlFor="edgeWeight">Peso</label>
+                        <label htmlFor="edgeWeight" className="active">Peso / Capacidade</label>
                     </div>
-                    <div className="input-field col m12">
+                    {false && <div className="input-field col m12">
                         {this.state &&
                             <input id="edgeCapacity" type="number"
                                 value={this.state.capacity || ""}
@@ -509,6 +535,7 @@ class EdgeProps extends React.Component {
                         }
                         <label htmlFor="edgeCapacity" className="active">Capacidade</label>
                     </div>
+                    }
                 </div>
             </div>
             <div className="modal-footer">
@@ -669,7 +696,7 @@ class GraphEdit extends Component {
 
             setTimeout(() => window.$('#modalLoad').modal('open'), 500)
         }
-        
+
         switch (this.props.default) {
             case 'k5':
                 store.dispatch({

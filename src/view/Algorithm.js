@@ -76,10 +76,10 @@ const Vertex = (vertex) => {
 }
 
 const Edge = (edge) => {
-    const DirectionalEdges = store.getState().Graph.present.directionalEdges;
+    const DirectionalEdges = store.getState().Graph.present.directionalEdges || store.getState().Algorithm.present.vars.directionalEdges;
     const WeightedEdges = store.getState().Graph.present.weightedEdges;
 
-    let x, y, loop;
+    let x, y, nx, ny, loop, oposite;
 
     if (edge.from === edge.to)
         loop = true;
@@ -89,18 +89,24 @@ const Edge = (edge) => {
     if (loop) {
         x = edge.from.x;
         y = edge.from.y + 70;
+        nx = edge.from.x;
+        ny = edge.from.y - 70;
+
+        oposite = true;
     }
-    else if (WeightedEdges || edge.opositeEdge) {
+    else {
         const mx = (edge.from.x + edge.to.x) / 2;
         const my = (edge.from.y + edge.to.y) / 2;
 
         const vx = mx - edge.from.x;
         const vy = my - edge.from.y;
 
-        const multi = edge.opositeEdge ? -30 / Math.sqrt(vx * vx + vy * vy) : -15 / Math.sqrt(vx * vx + vy * vy);
+        const multi = oposite ? -30 / Math.sqrt(vx * vx + vy * vy) : -15 / Math.sqrt(vx * vx + vy * vy);
 
         x = mx - vy * multi;
         y = my + vx * multi;
+        nx = mx + vy * multi;
+        ny = my - vx * multi;
     }
 
     return <g key={edge.id}>
@@ -111,6 +117,15 @@ const Edge = (edge) => {
             textAnchor="middle"
             alignmentBaseline="central">
             {edge.weight}
+        </text>}
+
+        {edge.name && <text
+            display="block"
+            x={nx}
+            y={ny + (loop ? - 20 : 0)}
+            textAnchor="middle"
+            alignmentBaseline="central">
+            {edge.name}
         </text>}
 
         {edge.opositeEdge || loop ?

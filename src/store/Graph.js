@@ -25,6 +25,22 @@ const Graph = (state = cookie ?
     const controlsState = store.getState().ControlsEdit.action;
 
     switch (action.type) {
+        case 'IMPORT_GRAPH':
+            try {
+                let newState = JSON.parse(action.state)
+                
+                return {
+                    vertexList: [], edgeList: [], edgeListIntent: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
+                    directionalEdges: false, weightedEdges: false,
+                    ...newState
+                }
+            }
+
+            catch (e) {
+                alert("Erro ao importar grafo!")
+
+                break;
+            }
         case 'CLEAR_GRAPH':
             return {
                 vertexList: [], edgeList: [], mouseDownVertex: false, edgeSelected: null, vertexSelected: null,
@@ -61,7 +77,8 @@ const Graph = (state = cookie ?
                         return {
                             ...e,
                             weight: action.weight,
-                            capacity: action.capacity
+                            capacity: action.capacity,
+                            name: action.name
                         }
 
                     return e;
@@ -162,6 +179,7 @@ const Graph = (state = cookie ?
 
                         return e;
                     }), {
+                        name: "",
                         id: state.edgeList.length,
                         from: state.vertexList[state.mouseDownId],
                         to: state.vertexList[action.id],
@@ -190,7 +208,7 @@ const Graph = (state = cookie ?
                 ...state,
                 vertexList: newVertexListAdd,
                 edgeList: [...state.edgeList,
-                    ...state.edgeListIntent.filter(e => e.from < newVertexListAdd.length && e.to < newVertexListAdd.length)
+                ...state.edgeListIntent.filter(e => e.from < newVertexListAdd.length && e.to < newVertexListAdd.length)
                     .map((e, idx) => {
                         return {
                             id: state.edgeList.length + idx,
@@ -210,9 +228,9 @@ const Graph = (state = cookie ?
             return { ...state, weightedEdges: !state.weightedEdges };
         case 'LOAD_GRAPH_DEFAULT':
             return {
-                ...state, 
-                vertexList: [], 
-                edgeList: [], 
+                ...state,
+                vertexList: [],
+                edgeList: [],
                 edgeListIntent: action.edgeList,
                 directionalEdges: false, weightedEdges: false
             }
